@@ -7,7 +7,6 @@
 #include "InputActionValue.h"
 #include "LicentaRPGCharacter.generated.h"
 
-
 UCLASS(config=Game)
 class ALicentaRPGCharacter : public ACharacter
 {
@@ -37,9 +36,20 @@ class ALicentaRPGCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	/** Crouch Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* CrouchAction;
+
+	/** Sprint Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* SprintAction;
+
+	/** isCrouched Variable */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
+	bool isCrouched;
+
 public:
 	ALicentaRPGCharacter();
-	
 
 protected:
 
@@ -49,13 +59,23 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 			
+	/** Called for crouching input */
+	void Crouch();
+
+	/** Called for sprinting input */
+	void SprintStart();
+	void SprintStop();
 
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	// To add mapping context
 	virtual void BeginPlay();
+
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -63,4 +83,3 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
-

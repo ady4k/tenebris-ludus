@@ -32,7 +32,7 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 	// instead of recompiling to adjust them
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
@@ -63,9 +63,14 @@ void ALicentaRPGCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+
 	}
 }
 
+void ALicentaRPGCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -84,6 +89,12 @@ void ALicentaRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALicentaRPGCharacter::Look);
 
+		// Crouching
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ALicentaRPGCharacter::Crouch);
+
+		// Sprinting
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::SprintStart);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ALicentaRPGCharacter::SprintStop);
 	}
 
 }
@@ -124,6 +135,39 @@ void ALicentaRPGCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void ALicentaRPGCharacter::Crouch()
+{
+	isCrouched = !isCrouched;
+	if (isCrouched)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 200.f;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	}
+}
 
+void ALicentaRPGCharacter::SprintStart()
+{
+	if (isCrouched)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	}
+}
 
-
+void ALicentaRPGCharacter::SprintStop()
+{
+	if (isCrouched)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 200.f;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	}
+}
