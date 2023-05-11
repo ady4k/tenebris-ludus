@@ -1,10 +1,10 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "CharacterStats.h"
+
 #include "LicentaRPGCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -46,7 +46,15 @@ class ALicentaRPGCharacter : public ACharacter
 
 	/** isCrouched Variable */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	bool isCrouched;
+	bool IsCrouched;
+
+	/** User Widget */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables, meta = (AllowPrivateAccess = "true"))
+	class UUserWidget* MainHUD;
+
+	/** Character Stats */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
+	class UCharacterStats* CharacterStats;
 
 public:
 	ALicentaRPGCharacter();

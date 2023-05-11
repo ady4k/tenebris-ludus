@@ -1,6 +1,5 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "LicentaRPGCharacter.h"
+
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -49,6 +48,9 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	// Create a Character Stats Component
+	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
 }
 
 void ALicentaRPGCharacter::BeginPlay()
@@ -63,7 +65,6 @@ void ALicentaRPGCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
-
 	}
 }
 
@@ -137,8 +138,8 @@ void ALicentaRPGCharacter::Look(const FInputActionValue& Value)
 
 void ALicentaRPGCharacter::Crouch()
 {
-	isCrouched = !isCrouched;
-	if (isCrouched)
+	IsCrouched = !IsCrouched;
+	if (IsCrouched)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 200.f;
 	}
@@ -150,7 +151,7 @@ void ALicentaRPGCharacter::Crouch()
 
 void ALicentaRPGCharacter::SprintStart()
 {
-	if (isCrouched)
+	if (IsCrouched)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	}
@@ -162,7 +163,7 @@ void ALicentaRPGCharacter::SprintStart()
 
 void ALicentaRPGCharacter::SprintStop()
 {
-	if (isCrouched)
+	if (IsCrouched)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 200.f;
 	}
