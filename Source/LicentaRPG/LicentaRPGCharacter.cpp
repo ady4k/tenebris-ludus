@@ -12,19 +12,6 @@
 
 //////////////////////////////////////////////////////////////////////////
 // ALicentaRPGCharacter
-
-float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	AActor* DamageCauser)
-{
-	float const ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	CharacterStats->DecreaseHealth(ActualDamage);
-	if (CharacterStats->GetCurrentHealth() <= 0.f)
-	{
-		OnCharacterDeath();
-	}
-	return ActualDamage;
-}
-
 ALicentaRPGCharacter::ALicentaRPGCharacter()
 {
 	// Set size for collision capsule
@@ -67,7 +54,6 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 
 
 
-
 void ALicentaRPGCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -93,8 +79,8 @@ void ALicentaRPGCharacter::Tick(float DeltaTime)
 	{
 		if (!IsOutOfStamina(0.1f))
 		{
-			float const StaminaCost = IsCrouched ? 10.0f : 15.0f;
-			if (!GetCharacterMovement()->IsFalling())
+			float const StaminaCost = IsCrouched ? CrouchSprintStaminaCost : SprintStaminaCost;
+			if (IsCharacterOnGround())
 			{
 				CharacterStats->DecreaseStamina(StaminaCost * DeltaTime);
 			}
@@ -115,7 +101,7 @@ void ALicentaRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		//Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ALicentaRPGCharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		//Moving
@@ -125,7 +111,7 @@ void ALicentaRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALicentaRPGCharacter::Look);
 
 		// Crouching
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ALicentaRPGCharacter::Crouch);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::Crouch);
 
 		// Sprinting
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::SprintStart);
@@ -136,10 +122,10 @@ void ALicentaRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 
 void ALicentaRPGCharacter::Jump()
 {
-	if (!IsOutOfStamina(19.9f) && !GetCharacterMovement()->IsFalling())
+	if (!IsOutOfStamina(JumpStaminaCost) && IsCharacterOnGround() && !IsCrouched)
 	{
 		Super::Jump();
-		CharacterStats->DecreaseStamina(20);
+		CharacterStats->DecreaseStamina(JumpStaminaCost);
 		if (CanRegenStamina)
 		{
 			DisableStaminaRegen();
@@ -187,14 +173,21 @@ void ALicentaRPGCharacter::Look(const FInputActionValue& Value)
 void ALicentaRPGCharacter::Crouch()
 {
 	IsCrouched = !IsCrouched;
-	GetCharacterMovement()->MaxWalkSpeed = IsCrouched ? 200.f : 300.f;
+	if (IsSprinting)
+	{
+		IsCrouched ? SetMaxWalkSpeed(MaxCrouchSprintSpeed) : SetMaxWalkSpeed(MaxSprintSpeed);
+	}
+	else
+	{
+		IsCrouched ? SetMaxWalkSpeed(MaxCrouchWalkSpeed) : SetMaxWalkSpeed(MaxWalkSpeed);
+	}
 }
 
 void ALicentaRPGCharacter::SprintStart()
 {
 	if (!IsOutOfStamina(1))
 	{
-		GetCharacterMovement()->MaxWalkSpeed = IsCrouched ? 300.f : 500.f;
+		IsCrouched ? SetMaxWalkSpeed(MaxCrouchSprintSpeed) : SetMaxWalkSpeed(MaxSprintSpeed);
 		IsSprinting = true;
 		DisableStaminaRegen();
 	}
@@ -202,10 +195,12 @@ void ALicentaRPGCharacter::SprintStart()
 
 void ALicentaRPGCharacter::SprintStop()
 {
-	GetCharacterMovement()->MaxWalkSpeed = IsCrouched ? 200.f : 300.f;
+	IsCrouched ? SetMaxWalkSpeed(MaxCrouchWalkSpeed) : SetMaxWalkSpeed(MaxWalkSpeed);
 	IsSprinting = false;
 }
 
+
+// ---------------------------------------------------------
 bool ALicentaRPGCharacter::IsOutOfStamina(float const Offset) const
 {
 	return CharacterStats->GetCurrentStamina() <= 0.0f + Offset;
@@ -240,4 +235,26 @@ void ALicentaRPGCharacter::RegenStamina() const
 	{
 		CharacterStats->IncreaseStamina(StaminaRegenAmount);
 	}
+}
+
+void ALicentaRPGCharacter::SetMaxWalkSpeed(float const Speed) const
+{
+	GetCharacterMovement()->MaxWalkSpeed = Speed;
+}
+
+bool ALicentaRPGCharacter::IsCharacterOnGround() const
+{
+	return !GetCharacterMovement()->IsFalling();
+}
+
+float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	float const ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	CharacterStats->DecreaseHealth(ActualDamage);
+	if (CharacterStats->GetCurrentHealth() <= 0.f)
+	{
+		OnCharacterDeath();
+	}
+	return ActualDamage;
 }

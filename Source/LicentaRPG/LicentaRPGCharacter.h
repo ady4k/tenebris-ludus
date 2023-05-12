@@ -77,12 +77,16 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Physics")
 	void OnCharacterDeath();
 
+private:
 	bool IsOutOfStamina(float const Offset) const;
 	bool HasMaximumStamina() const;
 	void UpdateLastStaminaUsageTime();
 	void EnableStaminaRegen();
 	void DisableStaminaRegen();
 	void RegenStamina() const;
+
+	void SetMaxWalkSpeed(float const Speed) const;
+	bool IsCharacterOnGround() const;
 
 protected:
 	// APawn interface
@@ -103,14 +107,27 @@ public:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
 	bool IsCrouched = false;
-
 	bool IsSprinting = false;
-
 
 	FTimerHandle EnableStaminaRegenTimerHandle;
 	FTimerHandle StaminaRegenTimerHandle;
-	float EnableStaminaRegenDelay = 3.0f;
-	float StaminaRegenDelay = 0.1f;
-	int StaminaRegenAmount = 2;
 	bool CanRegenStamina = true;
+
+// -------- CONSTANTS -------- //
+private:
+	// -------- MOVEMENT -------- //
+	const float MaxWalkSpeed = 300.0f;
+	const float MaxSprintSpeed = 500.0f;
+	const float MaxCrouchWalkSpeed = 200.0f;
+	const float MaxCrouchSprintSpeed = 300.0f;
+
+	// -------- STAMINA REGEN -------- //
+	float const EnableStaminaRegenDelay = 3.0f;
+	float const StaminaRegenDelay = 0.1f;
+	float const StaminaRegenAmount = 2.5f;
+
+	// ------- STAMINA COSTS ------- //
+	float const CrouchSprintStaminaCost = 10.0f;
+	float const SprintStaminaCost = 15.0f;
+	float const JumpStaminaCost = 20.0f;
 };
