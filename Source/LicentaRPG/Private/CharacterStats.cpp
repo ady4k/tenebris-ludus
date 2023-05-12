@@ -157,6 +157,8 @@ void UCharacterStats::IncreaseLevel()
 	IncreaseMaxMana(2);
 	IncreaseMaxStamina(3);
 	AvailableStatsPoints++;
+
+	UpdateLevelText(CurrentLevel);
 }
 
 

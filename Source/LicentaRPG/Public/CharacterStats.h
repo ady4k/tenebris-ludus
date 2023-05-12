@@ -32,6 +32,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
 	void UpdateExperienceBar(float CurrentExperienceValue, float MaxExperienceValue);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
+	void UpdateLevelText(int32 CurrentLevelValue);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
