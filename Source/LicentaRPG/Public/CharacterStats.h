@@ -4,7 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "CharacterStats.generated.h"
 
-enum StatsSelection : uint8
+enum EStatsSelection : uint8
 {
 	Strength = 1,
 	Dexterity = 2,
@@ -45,8 +45,6 @@ public:
 	void DecreaseHealth(float const Amount);
 	float GetCurrentHealth() const;
 
-	void OnCharacterDeath();
-
 	void IncreaseMaxMana(float const Amount);
 	void IncreaseMana(float const Amount);
 	void DecreaseMana(float const Amount);
@@ -62,7 +60,7 @@ public:
 	void IncreaseExperience(float const Amount);
 
 	void IncreaseLevel();
-	void IncreaseStats(StatsSelection StatToChange);
+	void IncreaseStats(EStatsSelection StatToChange);
 
 private:
 	// Character stats

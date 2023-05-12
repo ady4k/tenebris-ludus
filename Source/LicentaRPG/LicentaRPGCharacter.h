@@ -55,8 +55,11 @@ class ALicentaRPGCharacter : public ACharacter
 public:
 	ALicentaRPGCharacter();
 
+	UFUNCTION(BlueprintCallable, Category = "CharacterStats")
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 protected:
-	void Jump() override;
+	virtual void Jump() override;
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -69,8 +72,10 @@ protected:
 
 	/** Called for sprinting input */
 	void SprintStart();
-
 	void SprintStop();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Physics")
+	void OnCharacterDeath();
 
 	bool IsOutOfStamina(float const Offset) const;
 	bool HasMaximumStamina() const;
@@ -87,7 +92,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	// To add mapping context
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -104,9 +109,8 @@ private:
 
 	FTimerHandle EnableStaminaRegenTimerHandle;
 	FTimerHandle StaminaRegenTimerHandle;
-	float EnableStaminaRegenDelay = 5.0f;
-	float StaminaRegenDelay = 0.15f;
-	int StaminaRegenAmount = 1;
+	float EnableStaminaRegenDelay = 3.0f;
+	float StaminaRegenDelay = 0.1f;
+	int StaminaRegenAmount = 2;
 	bool CanRegenStamina = true;
-
 };

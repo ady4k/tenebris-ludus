@@ -13,6 +13,18 @@
 //////////////////////////////////////////////////////////////////////////
 // ALicentaRPGCharacter
 
+float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	float const ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	CharacterStats->DecreaseHealth(ActualDamage);
+	if (CharacterStats->GetCurrentHealth() <= 0.f)
+	{
+		OnCharacterDeath();
+	}
+	return ActualDamage;
+}
+
 ALicentaRPGCharacter::ALicentaRPGCharacter()
 {
 	// Set size for collision capsule
@@ -55,6 +67,7 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 
 
 
+
 void ALicentaRPGCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -81,7 +94,10 @@ void ALicentaRPGCharacter::Tick(float DeltaTime)
 		if (!IsOutOfStamina(0.1f))
 		{
 			float const StaminaCost = IsCrouched ? 10.0f : 15.0f;
-			CharacterStats->DecreaseStamina(StaminaCost * DeltaTime);
+			if (!GetCharacterMovement()->IsFalling())
+			{
+				CharacterStats->DecreaseStamina(StaminaCost * DeltaTime);
+			}
 			UpdateLastStaminaUsageTime();
 		}
 		else

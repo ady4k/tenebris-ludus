@@ -49,7 +49,7 @@ void UCharacterStats::DecreaseHealth(float const Amount)
 	CurrentHealth -= Amount;
 	if (CurrentHealth <= 0)
 	{
-		OnCharacterDeath();
+		CurrentHealth = 0;
 	}
 	UpdateHealthBar(CurrentHealth, MaxHealth);
 }
@@ -57,14 +57,6 @@ void UCharacterStats::DecreaseHealth(float const Amount)
 float UCharacterStats::GetCurrentHealth() const
 {
 	return CurrentHealth;
-}
-
-
-// ----- DEATH -----
-void UCharacterStats::OnCharacterDeath()
-{
-	// TODO: Implement onCharacterDeath function
-	UE_LOG(LogTemp, Warning, TEXT("Character died"));
 }
 
 
@@ -169,23 +161,23 @@ void UCharacterStats::IncreaseLevel()
 
 
 // ----- STATS POINTS -----
-void UCharacterStats::IncreaseStats(StatsSelection StatToChange)
+void UCharacterStats::IncreaseStats(EStatsSelection StatToChange)
 {
 	switch (StatToChange)
 	{
-		case StatsSelection::Strength:
+		case EStatsSelection::Strength:
 			IncreaseMaxHealth(10);
 			IncreaseMaxMana(2);
 			IncreaseMaxStamina(3);
 			AvailableStatsPoints--;
 			break;
-		case StatsSelection::Dexterity:
+		case EStatsSelection::Dexterity:
 			IncreaseMaxHealth(7);
 			IncreaseMaxMana(3);
 			IncreaseMaxStamina(5);
 			AvailableStatsPoints--;
 			break;
-		case StatsSelection::Intelligence:
+		case EStatsSelection::Intelligence:
 			IncreaseMaxHealth(4);
 			IncreaseMaxMana(8);
 			IncreaseMaxStamina(2);
