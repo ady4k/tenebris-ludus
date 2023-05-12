@@ -53,6 +53,8 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
 }
 
+
+
 void ALicentaRPGCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -66,11 +68,27 @@ void ALicentaRPGCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	GetWorldTimerManager().SetTimer(EnableStaminaRegenTimerHandle, this, &ALicentaRPGCharacter::EnableStaminaRegen, EnableStaminaRegenDelay, false);
+	GetWorldTimerManager().SetTimer(StaminaRegenTimerHandle, this, &ALicentaRPGCharacter::RegenStamina, StaminaRegenDelay, true);
 }
 
 void ALicentaRPGCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (IsSprinting)
+	{
+		if (!IsOutOfStamina(0.1f))
+		{
+			float const StaminaCost = IsCrouched ? 10.0f : 15.0f;
+			CharacterStats->DecreaseStamina(StaminaCost * DeltaTime);
+			UpdateLastStaminaUsageTime();
+		}
+		else
+		{
+			SprintStop();
+		}
+	}
 }
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -81,7 +99,7 @@ void ALicentaRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		//Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ALicentaRPGCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		//Moving
@@ -98,6 +116,20 @@ void ALicentaRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ALicentaRPGCharacter::SprintStop);
 	}
 
+}
+
+void ALicentaRPGCharacter::Jump()
+{
+	if (!IsOutOfStamina(19.9f) && !GetCharacterMovement()->IsFalling())
+	{
+		Super::Jump();
+		CharacterStats->DecreaseStamina(20);
+		if (CanRegenStamina)
+		{
+			DisableStaminaRegen();
+		}
+		UpdateLastStaminaUsageTime();
+	}
 }
 
 void ALicentaRPGCharacter::Move(const FInputActionValue& Value)
@@ -139,36 +171,57 @@ void ALicentaRPGCharacter::Look(const FInputActionValue& Value)
 void ALicentaRPGCharacter::Crouch()
 {
 	IsCrouched = !IsCrouched;
-	if (IsCrouched)
-	{
-		GetCharacterMovement()->MaxWalkSpeed = 200.f;
-	}
-	else
-	{
-		GetCharacterMovement()->MaxWalkSpeed = 300.f;
-	}
+	GetCharacterMovement()->MaxWalkSpeed = IsCrouched ? 200.f : 300.f;
 }
 
 void ALicentaRPGCharacter::SprintStart()
 {
-	if (IsCrouched)
+	if (!IsOutOfStamina(1))
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 300.f;
-	}
-	else
-	{
-		GetCharacterMovement()->MaxWalkSpeed = 500.f;
+		GetCharacterMovement()->MaxWalkSpeed = IsCrouched ? 300.f : 500.f;
+		IsSprinting = true;
+		DisableStaminaRegen();
 	}
 }
 
 void ALicentaRPGCharacter::SprintStop()
 {
-	if (IsCrouched)
+	GetCharacterMovement()->MaxWalkSpeed = IsCrouched ? 200.f : 300.f;
+	IsSprinting = false;
+}
+
+bool ALicentaRPGCharacter::IsOutOfStamina(float const Offset) const
+{
+	return CharacterStats->GetCurrentStamina() <= 0.0f + Offset;
+}
+
+bool ALicentaRPGCharacter::HasMaximumStamina() const
+{
+		return CharacterStats->GetCurrentStamina() >= CharacterStats->GetMaxStamina();
+}
+
+void ALicentaRPGCharacter::UpdateLastStaminaUsageTime()
+{
+	GetWorld()->GetTimerManager().ClearTimer(EnableStaminaRegenTimerHandle);
+	GetWorld()->GetTimerManager().SetTimer(EnableStaminaRegenTimerHandle, this, &ALicentaRPGCharacter::EnableStaminaRegen, EnableStaminaRegenDelay, false);
+}
+
+void ALicentaRPGCharacter::EnableStaminaRegen()
+{
+	CanRegenStamina = true;
+	GetWorldTimerManager().SetTimer(StaminaRegenTimerHandle, this, &ALicentaRPGCharacter::RegenStamina, StaminaRegenDelay, true);
+}
+
+void ALicentaRPGCharacter::DisableStaminaRegen()
+{
+	CanRegenStamina = false;
+	GetWorldTimerManager().ClearTimer(StaminaRegenTimerHandle);
+}
+
+void ALicentaRPGCharacter::RegenStamina() const
+{
+	if (CanRegenStamina && !HasMaximumStamina())
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 200.f;
-	}
-	else
-	{
-		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+		CharacterStats->IncreaseStamina(StaminaRegenAmount);
 	}
 }

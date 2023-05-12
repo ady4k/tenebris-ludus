@@ -43,19 +43,22 @@ public:
 	void IncreaseMaxHealth(float const Amount);
 	void IncreaseHealth(float const Amount);
 	void DecreaseHealth(float const Amount);
+	float GetCurrentHealth() const;
+
 	void OnCharacterDeath();
 
 	void IncreaseMaxMana(float const Amount);
 	void IncreaseMana(float const Amount);
 	void DecreaseMana(float const Amount);
+	float GetCurrentMana() const;
 
 	void IncreaseMaxStamina(float const Amount);
 	void IncreaseStamina(float const Amount);
 	void DecreaseStamina(float const Amount);
+	float GetCurrentStamina() const;
+	float GetMaxStamina() const;
 
 	void IncreaseMaxExperience(float const Amount);
-
-	UFUNCTION(BlueprintCallable, Category = "Experience")
 	void IncreaseExperience(float const Amount);
 
 	void IncreaseLevel();

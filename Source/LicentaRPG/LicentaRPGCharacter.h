@@ -44,10 +44,6 @@ class ALicentaRPGCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* SprintAction;
 
-	/** isCrouched Variable */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	bool IsCrouched;
-
 	/** User Widget */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables, meta = (AllowPrivateAccess = "true"))
 	class UUserWidget* MainHUD;
@@ -60,6 +56,7 @@ public:
 	ALicentaRPGCharacter();
 
 protected:
+	void Jump() override;
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -72,7 +69,15 @@ protected:
 
 	/** Called for sprinting input */
 	void SprintStart();
+
 	void SprintStop();
+
+	bool IsOutOfStamina(float const Offset) const;
+	bool HasMaximumStamina() const;
+	void UpdateLastStaminaUsageTime();
+	void EnableStaminaRegen();
+	void DisableStaminaRegen();
+	void RegenStamina() const;
 
 protected:
 	// APawn interface
@@ -84,10 +89,24 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
-
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
+	bool IsCrouched = false;
+
+	bool IsSprinting = false;
+
+
+	FTimerHandle EnableStaminaRegenTimerHandle;
+	FTimerHandle StaminaRegenTimerHandle;
+	float EnableStaminaRegenDelay = 5.0f;
+	float StaminaRegenDelay = 0.15f;
+	int StaminaRegenAmount = 1;
+	bool CanRegenStamina = true;
+
 };

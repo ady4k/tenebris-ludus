@@ -25,6 +25,8 @@ void UCharacterStats::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+
+// ----- HEALTH -----
 void UCharacterStats::IncreaseMaxHealth(float const Amount)
 {
 	MaxHealth += Amount;
@@ -52,12 +54,21 @@ void UCharacterStats::DecreaseHealth(float const Amount)
 	UpdateHealthBar(CurrentHealth, MaxHealth);
 }
 
+float UCharacterStats::GetCurrentHealth() const
+{
+	return CurrentHealth;
+}
+
+
+// ----- DEATH -----
 void UCharacterStats::OnCharacterDeath()
 {
 	// TODO: Implement onCharacterDeath function
 	UE_LOG(LogTemp, Warning, TEXT("Character died"));
 }
 
+
+// ----- MANA -----
 void UCharacterStats::IncreaseMaxMana(float const Amount)
 {
 	MaxMana += Amount;
@@ -85,6 +96,13 @@ void UCharacterStats::DecreaseMana(float const Amount)
 	UpdateManaBar(CurrentMana, MaxMana);
 }
 
+float UCharacterStats::GetCurrentMana() const
+{
+	return CurrentMana;
+}
+
+
+// ----- STAMINA -----
 void UCharacterStats::IncreaseMaxStamina(float const Amount)
 {
 	MaxStamina += Amount;
@@ -112,6 +130,17 @@ void UCharacterStats::DecreaseStamina(float const Amount)
 	UpdateStaminaBar(CurrentStamina, MaxStamina);
 }
 
+float UCharacterStats::GetCurrentStamina() const
+{
+	return CurrentStamina;
+}
+
+float UCharacterStats::GetMaxStamina() const
+{
+	return MaxStamina;
+}
+
+// ----- EXPERIENCE -----
 void UCharacterStats::IncreaseMaxExperience(float const Amount)
 {
 	MaxExperience += Amount;
@@ -138,6 +167,8 @@ void UCharacterStats::IncreaseLevel()
 	AvailableStatsPoints++;
 }
 
+
+// ----- STATS POINTS -----
 void UCharacterStats::IncreaseStats(StatsSelection StatToChange)
 {
 	switch (StatToChange)
