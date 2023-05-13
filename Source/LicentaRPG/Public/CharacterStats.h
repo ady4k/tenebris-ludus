@@ -47,6 +47,7 @@ public:
 	void IncreaseHealth(float const Amount);
 	void DecreaseHealth(float const Amount);
 	float GetCurrentHealth() const;
+	float GetMaxHealth() const;
 
 	void IncreaseMaxMana(float const Amount);
 	void IncreaseMana(float const Amount);

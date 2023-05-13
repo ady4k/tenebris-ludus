@@ -59,6 +59,11 @@ float UCharacterStats::GetCurrentHealth() const
 	return CurrentHealth;
 }
 
+float UCharacterStats::GetMaxHealth() const
+{
+	return MaxHealth;
+}
+
 
 // ----- MANA -----
 void UCharacterStats::IncreaseMaxMana(float const Amount)

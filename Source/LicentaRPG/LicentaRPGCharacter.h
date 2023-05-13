@@ -78,6 +78,7 @@ protected:
 	void OnCharacterDeath();
 
 private:
+	// -------- STAMINA SYSTEM -------- //
 	bool IsOutOfStamina(float const Offset) const;
 	bool HasMaximumStamina() const;
 	void UpdateLastStaminaUsageTime();
@@ -85,8 +86,14 @@ private:
 	void DisableStaminaRegen();
 	void RegenStamina() const;
 
+	// -------- MOVEMENT -------- //
 	void SetMaxWalkSpeed(float const Speed) const;
 	bool IsCharacterOnGround() const;
+
+	// -------- FALL DAMAGE -------- //
+	virtual void Landed(const FHitResult& Hit) override;
+	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
+	float CalculateFallDamage(float const OnLandingVelocity, float const FallingDistance, float const PlayerMaxHealth) const;
 
 protected:
 	// APawn interface
@@ -105,21 +112,30 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 private:
+	// -------- MOVEMENT -------- //
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
 	bool IsCrouched = false;
 	bool IsSprinting = false;
 
+	// -------- STAMINA REGEN -------- //
 	FTimerHandle EnableStaminaRegenTimerHandle;
 	FTimerHandle StaminaRegenTimerHandle;
 	bool CanRegenStamina = true;
 
+	// -------- FALL DAMAGE -------- //
+	float InitialVerticalPosition = 0.0f;
+	float LandingVerticalPosition = 0.0f;
+	float FallDistance = 0.0f;
+	float LandingVelocity = 0.0f;
+	float FallDamage = 0.0f;
+
 // -------- CONSTANTS -------- //
 private:
 	// -------- MOVEMENT -------- //
-	const float MaxWalkSpeed = 300.0f;
-	const float MaxSprintSpeed = 500.0f;
-	const float MaxCrouchWalkSpeed = 200.0f;
-	const float MaxCrouchSprintSpeed = 300.0f;
+	float const MaxWalkSpeed = 300.0f;
+	float const MaxSprintSpeed = 500.0f;
+	float const MaxCrouchWalkSpeed = 200.0f;
+	float const MaxCrouchSprintSpeed = 300.0f;
 
 	// -------- STAMINA REGEN -------- //
 	float const EnableStaminaRegenDelay = 3.0f;
@@ -130,4 +146,9 @@ private:
 	float const CrouchSprintStaminaCost = 10.0f;
 	float const SprintStaminaCost = 15.0f;
 	float const JumpStaminaCost = 20.0f;
+
+	// -------- FALL DAMAGE -------- //
+	float const FallDistanceThreshold = 600.0f;
+	float const LandingVelocityThreshold = 1300.0f;
+	float const FallDamageMultiplier = 0.0001f;
 };

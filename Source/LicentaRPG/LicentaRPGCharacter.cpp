@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Engine/DamageEvents.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -247,8 +248,41 @@ bool ALicentaRPGCharacter::IsCharacterOnGround() const
 	return !GetCharacterMovement()->IsFalling();
 }
 
+void ALicentaRPGCharacter::Landed(const FHitResult& Hit)
+{
+	Super::OnLanded(Hit);
+	LandingVelocity = GetVelocity().Size();
+}
+
+void ALicentaRPGCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
+{
+	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
+	if (GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Falling)
+	{
+		InitialVerticalPosition = GetActorLocation().Z;
+	}
+	if (PrevMovementMode == EMovementMode::MOVE_Falling)
+	{
+		LandingVerticalPosition = GetActorLocation().Z;
+		FallDistance = InitialVerticalPosition - LandingVerticalPosition;
+		if (LandingVelocity > LandingVelocityThreshold && FallDistance > FallDistanceThreshold)
+		{
+			float const PlayerMaxHealth = CharacterStats->GetMaxHealth();
+			FallDamage = CalculateFallDamage(LandingVelocity, FallDistance, PlayerMaxHealth);
+			TakeDamage(FallDamage, FDamageEvent(), nullptr, nullptr);
+		}
+	}
+}
+
+float ALicentaRPGCharacter::CalculateFallDamage(float const OnLandingVelocity, float const FallingDistance, float const PlayerMaxHealth) const
+{
+	float const MaxHealthMultiplier = PlayerMaxHealth / 100 + ((PlayerMaxHealth / 100) * 0.66);
+	float const Damage = (OnLandingVelocity - LandingVelocityThreshold) * (FallingDistance - FallDistanceThreshold) * FallDamageMultiplier * MaxHealthMultiplier;
+	return Damage;
+}
+
 float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	AActor* DamageCauser)
+                                       AActor* DamageCauser)
 {
 	float const ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	CharacterStats->DecreaseHealth(ActualDamage);
