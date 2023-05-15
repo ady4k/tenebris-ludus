@@ -87,6 +87,7 @@ private:
 	void RegenStamina() const;
 
 	// -------- MOVEMENT -------- //
+	bool IsCharacterMoving() const;
 	void SetMaxWalkSpeed(float const Speed) const;
 	bool IsCharacterOnGround() const;
 

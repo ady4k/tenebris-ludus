@@ -81,7 +81,7 @@ void ALicentaRPGCharacter::Tick(float DeltaTime)
 		if (!IsOutOfStamina(0.1f))
 		{
 			float const StaminaCost = IsCrouched ? CrouchSprintStaminaCost : SprintStaminaCost;
-			if (IsCharacterOnGround())
+			if (IsCharacterOnGround() && IsCharacterMoving())
 			{
 				CharacterStats->DecreaseStamina(StaminaCost * DeltaTime);
 			}
@@ -238,6 +238,11 @@ void ALicentaRPGCharacter::RegenStamina() const
 	}
 }
 
+bool ALicentaRPGCharacter::IsCharacterMoving() const
+{
+	return GetVelocity().Size() > 0.0f;
+}
+
 void ALicentaRPGCharacter::SetMaxWalkSpeed(float const Speed) const
 {
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
@@ -260,6 +265,7 @@ void ALicentaRPGCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode,
 	if (GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Falling)
 	{
 		InitialVerticalPosition = GetActorLocation().Z;
+		IsCrouched = false;
 	}
 	if (PrevMovementMode == EMovementMode::MOVE_Falling)
 	{
