@@ -50,7 +50,7 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	// Create a Character Stats Component
-	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
+	GCharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("GCharacterStats"));
 }
 
 
@@ -68,8 +68,16 @@ void ALicentaRPGCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	GetWorldTimerManager().SetTimer(EnableStaminaRegenTimerHandle, this, &ALicentaRPGCharacter::EnableStaminaRegen, EnableStaminaRegenDelay, false);
-	GetWorldTimerManager().SetTimer(StaminaRegenTimerHandle, this, &ALicentaRPGCharacter::RegenStamina, StaminaRegenDelay, true);
+
+	if (GetWorld())
+	{
+		GameModeInstance = Cast<ALicentaRPGGameMode>(GetWorld()->GetAuthGameMode());
+	}
+
+	if (GameModeInstance)
+	{
+		ChangeDifficultyMultipliers();
+	}
 }
 
 void ALicentaRPGCharacter::Tick(float DeltaTime)
@@ -83,7 +91,7 @@ void ALicentaRPGCharacter::Tick(float DeltaTime)
 			float const StaminaCost = IsCrouched ? CrouchSprintStaminaCost : SprintStaminaCost;
 			if (IsCharacterOnGround() && IsCharacterMoving())
 			{
-				CharacterStats->DecreaseStamina(StaminaCost * DeltaTime);
+				GCharacterStats->DecreaseStamina(StaminaCost * DeltaTime);
 			}
 			UpdateLastStaminaUsageTime();
 		}
@@ -126,7 +134,7 @@ void ALicentaRPGCharacter::Jump()
 	if (!IsOutOfStamina(JumpStaminaCost) && IsCharacterOnGround() && !IsCrouched)
 	{
 		Super::Jump();
-		CharacterStats->DecreaseStamina(JumpStaminaCost);
+		GCharacterStats->DecreaseStamina(JumpStaminaCost);
 		if (CanRegenStamina)
 		{
 			DisableStaminaRegen();
@@ -204,18 +212,18 @@ void ALicentaRPGCharacter::SprintStop()
 // ---------------------------------------------------------
 bool ALicentaRPGCharacter::IsOutOfStamina(float const Offset) const
 {
-	return CharacterStats->GetCurrentStamina() <= 0.0f + Offset;
+	return GCharacterStats->GetCurrentStamina() <= 0.0f + Offset;
 }
 
 bool ALicentaRPGCharacter::HasMaximumStamina() const
 {
-		return CharacterStats->GetCurrentStamina() >= CharacterStats->GetMaxStamina();
+		return GCharacterStats->GetCurrentStamina() >= GCharacterStats->GetMaxStamina();
 }
 
 void ALicentaRPGCharacter::UpdateLastStaminaUsageTime()
 {
 	GetWorld()->GetTimerManager().ClearTimer(EnableStaminaRegenTimerHandle);
-	GetWorld()->GetTimerManager().SetTimer(EnableStaminaRegenTimerHandle, this, &ALicentaRPGCharacter::EnableStaminaRegen, EnableStaminaRegenDelay, false);
+	GetWorld()->GetTimerManager().SetTimer(EnableStaminaRegenTimerHandle, this, &ALicentaRPGCharacter::EnableStaminaRegen, EnableStaminaRegenDelay + StaminaEnableRegenMultiplier, false);
 }
 
 void ALicentaRPGCharacter::EnableStaminaRegen()
@@ -234,7 +242,7 @@ void ALicentaRPGCharacter::RegenStamina() const
 {
 	if (CanRegenStamina && !HasMaximumStamina())
 	{
-		CharacterStats->IncreaseStamina(StaminaRegenAmount);
+		GCharacterStats->IncreaseStamina(StaminaRegenAmount * StaminaRegenMultiplier);
 	}
 }
 
@@ -273,7 +281,7 @@ void ALicentaRPGCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode,
 		FallDistance = InitialVerticalPosition - LandingVerticalPosition;
 		if (LandingVelocity > LandingVelocityThreshold && FallDistance > FallDistanceThreshold)
 		{
-			float const PlayerMaxHealth = CharacterStats->GetMaxHealth();
+			float const PlayerMaxHealth = GCharacterStats->GetMaxHealth();
 			FallDamage = CalculateFallDamage(LandingVelocity, FallDistance, PlayerMaxHealth);
 			TakeDamage(FallDamage, FDamageEvent(), nullptr, nullptr);
 		}
@@ -287,12 +295,18 @@ float ALicentaRPGCharacter::CalculateFallDamage(float const OnLandingVelocity, f
 	return Damage;
 }
 
+void ALicentaRPGCharacter::ChangeDifficultyMultipliers()
+{
+	StaminaRegenMultiplier = GameModeInstance->GetDifficultyManager()->GetStaminaRegenMultiplier();
+	StaminaEnableRegenMultiplier = GameModeInstance->GetDifficultyManager()->GetStaminaEnableRegenMultiplier();
+}
+
 float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
                                        AActor* DamageCauser)
 {
 	float const ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	CharacterStats->DecreaseHealth(ActualDamage);
-	if (CharacterStats->GetCurrentHealth() <= 0.f)
+	GCharacterStats->DecreaseHealth(ActualDamage);
+	if (GCharacterStats->GetCurrentHealth() <= 0.f)
 	{
 		OnCharacterDeath();
 	}

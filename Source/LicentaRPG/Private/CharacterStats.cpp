@@ -157,12 +157,9 @@ void UCharacterStats::IncreaseExperience(float const Amount)
 void UCharacterStats::IncreaseLevel()
 {
 	CurrentLevel++;
-	IncreaseMaxExperience(15);
-	IncreaseMaxHealth(3);
-	IncreaseMaxMana(2);
-	IncreaseMaxStamina(3);
 	AvailableStatsPoints++;
-
+	CurrentHealth = MaxHealth;
+	CurrentMana = MaxMana;
 	UpdateLevelText(CurrentLevel);
 }
 
@@ -173,24 +170,28 @@ void UCharacterStats::IncreaseStats(EStatsSelection StatToChange)
 	switch (StatToChange)
 	{
 		case EStatsSelection::Strength:
-			IncreaseMaxHealth(10);
-			IncreaseMaxMana(2);
-			IncreaseMaxStamina(3);
-			AvailableStatsPoints--;
+			Strength++;
 			break;
 		case EStatsSelection::Dexterity:
-			IncreaseMaxHealth(7);
-			IncreaseMaxMana(3);
-			IncreaseMaxStamina(5);
-			AvailableStatsPoints--;
+			Dexterity++;
 			break;
 		case EStatsSelection::Intelligence:
-			IncreaseMaxHealth(4);
-			IncreaseMaxMana(8);
-			IncreaseMaxStamina(2);
-			AvailableStatsPoints--;
+			Intelligence++;
 			break;
 		default:
-			break;
+			return;
 	}
+	AvailableStatsPoints--;
+	CalculateStats();
+}
+
+void UCharacterStats::CalculateStats()
+{
+	MaxHealth = (Strength * 5) + (Dexterity * 3) + (Intelligence * 2);
+	MaxMana = (Strength * 1) + (Dexterity * 3) + (Intelligence * 6);
+	MaxStamina = (Strength * 3) + (Dexterity * 5) + (Intelligence * 2);
+	UpdateHealthBar(CurrentHealth, MaxHealth);
+	UpdateManaBar(CurrentMana, MaxMana);
+	UpdateStaminaBar(CurrentStamina, MaxStamina);
+	UpdateExperienceBar(CurrentExperience, MaxExperience);
 }

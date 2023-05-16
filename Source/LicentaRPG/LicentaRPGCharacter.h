@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "CharacterStats.h"
+#include "LicentaRPGGameMode.h"
 
 #include "LicentaRPGCharacter.generated.h"
 
@@ -11,6 +12,9 @@ UCLASS(config=Game)
 class ALicentaRPGCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+	UPROPERTY()
+	ALicentaRPGGameMode* GameModeInstance;
 
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -50,13 +54,16 @@ class ALicentaRPGCharacter : public ACharacter
 
 	/** Character Stats */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	class UCharacterStats* CharacterStats;
+	class UCharacterStats* GCharacterStats;
 
 public:
 	ALicentaRPGCharacter();
 
-	UFUNCTION(BlueprintCallable, Category = "CharacterStats")
+	UFUNCTION(BlueprintCallable, Category = "GCharacterStats")
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Difficulty")
+	void ChangeDifficultyMultipliers();
 
 protected:
 	virtual void Jump() override;
@@ -129,6 +136,10 @@ private:
 	float FallDistance = 0.0f;
 	float LandingVelocity = 0.0f;
 	float FallDamage = 0.0f;
+
+	// -------- DIFFICULTY -------- //
+	float StaminaRegenMultiplier = 1.f;
+	float StaminaEnableRegenMultiplier = 1.f;
 
 // -------- CONSTANTS -------- //
 private:

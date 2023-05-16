@@ -65,6 +65,7 @@ public:
 
 	void IncreaseLevel();
 	void IncreaseStats(EStatsSelection StatToChange);
+	void CalculateStats();
 
 private:
 	// Character stats
@@ -96,13 +97,13 @@ private:
 	int32 CurrentLevel = 1;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 Strength = 1;
+	int32 Strength = 10;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 Dexterity = 1;
+	int32 Dexterity = 10;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 Intelligence = 1;
+	int32 Intelligence = 10;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	int32 AvailableStatsPoints = 0;

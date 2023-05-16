@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "LicentaRPGGameMode.h"
-#include "LicentaRPGCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 ALicentaRPGGameMode::ALicentaRPGGameMode()
@@ -12,4 +11,12 @@ ALicentaRPGGameMode::ALicentaRPGGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	DifficultyManager = CreateDefaultSubobject<UDifficultyManager>(TEXT("DifficultyManager"));
+
+}
+
+UDifficultyManager* ALicentaRPGGameMode::GetDifficultyManager() const
+{
+	return DifficultyManager;
 }
