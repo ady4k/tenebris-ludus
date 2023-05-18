@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+
 #include "CombatSystem.generated.h"
 
 
@@ -12,17 +13,25 @@ class LICENTARPG_API UCombatSystem : public UActorComponent
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
+	TArray<UAnimMontage*> AttackMontages;
+
 public:	
 	// Sets default values for this component's properties
 	UCombatSystem();
 
-	void StartAttack();
-
-	void SwordAttack();
+	UFUNCTION(BlueprintCallable, Category = "Attacking")
 	void SwordAttackCombo();
+
+	UFUNCTION(BlueprintCallable, Category = "Attacking")
 	void SwordEndCombo();
 
-	void PlayAttackMontage(UAnimMontage* MontageToPlay, float const PlayRate);
+private:
+	void StartAttack();
+	void SwordAttack();
+
+	void PlayAttackMontage();
+	void CheckMontageIndex();
 
 protected:
 	// Called when the game starts
