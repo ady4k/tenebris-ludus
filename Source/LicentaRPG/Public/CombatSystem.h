@@ -20,6 +20,9 @@ public:
 	// Sets default values for this component's properties
 	UCombatSystem();
 
+	void StartAttack();
+
+protected:
 	UFUNCTION(BlueprintCallable, Category = "Attacking")
 	void SwordAttackCombo();
 
@@ -27,7 +30,6 @@ public:
 	void SwordEndCombo();
 
 private:
-	void StartAttack();
 	void SwordAttack();
 
 	void PlayAttackMontage();
@@ -50,4 +52,6 @@ private:
 	bool SaveAttack = false;
 
 	int32 AttackIndex = 0;
+
+	float AttackStaminaCost = 10;
 };

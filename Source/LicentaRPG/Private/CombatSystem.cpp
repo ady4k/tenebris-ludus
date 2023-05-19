@@ -44,6 +44,7 @@ void UCombatSystem::SwordAttack()
 	}
 	else
 	{
+		IsAttacking = true;
 		PlayAttackMontage();
 	}
 }
@@ -65,6 +66,7 @@ void UCombatSystem::SwordEndCombo()
 {
 	IsAttacking = false;
 	AttackIndex = 0;
+	AttackStaminaCost = 5;
 }
 
 void UCombatSystem::PlayAttackMontage()
@@ -76,8 +78,10 @@ void UCombatSystem::PlayAttackMontage()
 		{
 			UAnimMontage* MontageToPlay = AttackMontages[AttackIndex];
 			ParentActor->PlayAnimMontage(MontageToPlay, 1.0);
+			ParentActor->DecreaseStamina(AttackStaminaCost);
 		}
 	}
+	AttackStaminaCost += 3;
 	AttackIndex++;
 }
 

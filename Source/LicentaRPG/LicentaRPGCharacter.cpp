@@ -94,9 +94,8 @@ void ALicentaRPGCharacter::Tick(float DeltaTime)
 			float const StaminaCost = IsCrouched ? CrouchSprintStaminaCost : SprintStaminaCost;
 			if (IsCharacterOnGround() && IsCharacterMoving())
 			{
-				CharacterStats->DecreaseStamina(StaminaCost * DeltaTime);
+				DecreaseStamina(StaminaCost * DeltaTime);
 			}
-			UpdateLastStaminaUsageTime();
 		}
 		else
 		{
@@ -140,12 +139,11 @@ void ALicentaRPGCharacter::Jump()
 	if (!IsOutOfStamina(JumpStaminaCost) && IsCharacterOnGround() && !IsCrouched)
 	{
 		Super::Jump();
-		CharacterStats->DecreaseStamina(JumpStaminaCost);
+		DecreaseStamina(JumpStaminaCost);
 		if (CanRegenStamina)
 		{
 			DisableStaminaRegen();
 		}
-		UpdateLastStaminaUsageTime();
 	}
 }
 
@@ -255,6 +253,12 @@ void ALicentaRPGCharacter::RegenStamina() const
 	}
 }
 
+void ALicentaRPGCharacter::DecreaseStamina(float const StaminaCost)
+{
+	CharacterStats->DecreaseStamina(StaminaCost);
+	UpdateLastStaminaUsageTime();
+}
+
 bool ALicentaRPGCharacter::IsCharacterMoving() const
 {
 	return GetVelocity().Size() > 0.0f;
@@ -321,6 +325,8 @@ void ALicentaRPGCharacter::ChangeDifficultyMultipliers()
 }
 
 
+
+
 // ---------------------------------------------------------
 // Damage
 // ---------------------------------------------------------
@@ -344,5 +350,9 @@ float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& D
 
 void ALicentaRPGCharacter::InvokeAttack()
 {
-	CombatSystem->StartAttack();
+	if (!IsOutOfStamina(5.f) && IsCharacterOnGround())
+	{
+		CombatSystem->StartAttack();
+		DisableStaminaRegen();
+	}
 }

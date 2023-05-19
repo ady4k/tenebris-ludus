@@ -77,6 +77,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Difficulty")
 	void ChangeDifficultyMultipliers();
 
+	void DecreaseStamina(float const StaminaCost);
+
 protected:
 	virtual void Jump() override;
 
@@ -167,14 +169,14 @@ private:
 	float const MaxCrouchSprintSpeed = 300.0f;
 
 	// -------- STAMINA REGEN -------- //
-	float const EnableStaminaRegenDelay = 3.0f;
+	float const EnableStaminaRegenDelay = 2.0f;
 	float const StaminaRegenDelay = 0.1f;
-	float const StaminaRegenAmount = 2.5f;
+	float const StaminaRegenAmount = 3.5f;
 
 	// ------- STAMINA COSTS ------- //
-	float const CrouchSprintStaminaCost = 10.0f;
-	float const SprintStaminaCost = 15.0f;
-	float const JumpStaminaCost = 20.0f;
+	float const CrouchSprintStaminaCost = 7.0f;
+	float const SprintStaminaCost = 10.0f;
+	float const JumpStaminaCost = 15.0f;
 
 	// -------- FALL DAMAGE -------- //
 	float const FallDistanceThreshold = 600.0f;
