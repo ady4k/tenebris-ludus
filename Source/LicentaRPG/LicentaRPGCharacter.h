@@ -61,17 +61,17 @@ class ALicentaRPGCharacter : public ACharacter
 	class UUserWidget* MainHUD;
 
 	/** Character Stats */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	class UCharacterStats* CharacterStats;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
+	class UCharacterStats* CharacterStatsG;
 
 	/** Combat System */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	class UCombatSystem* CombatSystem;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
+	class UCombatSystem* CombatSystemG;
 
 public:
 	ALicentaRPGCharacter();
 
-	UFUNCTION(BlueprintCallable, Category = "CharacterStats")
+	UFUNCTION(BlueprintCallable, Category = "Character Stats")
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Difficulty")
@@ -104,7 +104,7 @@ private:
 	// -------- STAMINA SYSTEM -------- //
 	bool IsOutOfStamina(float const Offset) const;
 	bool HasMaximumStamina() const;
-	void UpdateLastStaminaUsageTime();
+	void UpdateStaminaRegenTimers();
 	void EnableStaminaRegen();
 	void DisableStaminaRegen();
 	void RegenStamina() const;
@@ -158,10 +158,9 @@ private:
 
 	// -------- DIFFICULTY -------- //
 	float StaminaRegenMultiplier = 1.f;
-	float StaminaEnableRegenMultiplier = 1.f;
+	float StaminaEnableRegenAdditive = 1.f;
 
 // -------- CONSTANTS -------- //
-private:
 	// -------- MOVEMENT -------- //
 	float const MaxWalkSpeed = 300.0f;
 	float const MaxSprintSpeed = 500.0f;

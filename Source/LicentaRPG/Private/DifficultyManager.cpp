@@ -41,11 +41,14 @@ void UDifficultyManager::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UDifficultyManager::CalculateDifficultyMultipliers()
 {
-	float const EnemyMultiplier = 0.75f + DifficultyLevel * 0.25f;
-	SetEnemyDamageMultiplier(EnemyMultiplier);
-	SetEnemyHealthMultiplier(EnemyMultiplier);
+	SetEnemyDamageMultiplier(0.75f + DifficultyLevel * 0.25f);
+	SetEnemyDamageReudctionMultiplier(1.25f - DifficultyLevel * 0.25f);
+	SetEnemyMovementSpeedMultiplier(0.75f + DifficultyLevel * 0.25f);
+	SetEnemyHealthRegenMultiplier(0.5f + DifficultyLevel * 0.5f);
+	SetEnemyHealthRegenDelayAdditive(10.f - DifficultyLevel * 2.5f);
+
 	SetStaminaRegenMultiplier(1.25f - DifficultyLevel * 0.25f);
-	SetStaminaEnableRegenMultiplier(1.f + DifficultyLevel * 1.f);
+	SetStaminaEnableRegenAdditive(1.f + DifficultyLevel * 1.f);
 }
 
 void UDifficultyManager::SetEnemyDamageMultiplier(const float Multiplier)
@@ -57,13 +60,40 @@ void UDifficultyManager::SetEnemyDamageMultiplier(const float Multiplier)
 	EnemyDamageMultiplier = Multiplier;
 }
 
-void UDifficultyManager::SetEnemyHealthMultiplier(const float Multiplier)
+void UDifficultyManager::SetEnemyDamageReudctionMultiplier(const float Multiplier)
+{
+	if (Multiplier < 0.5f || Multiplier > 1.25f)
+	{
+		return;
+	}
+	EnemyDamageReductionMultiplier = Multiplier;
+}
+
+void UDifficultyManager::SetEnemyMovementSpeedMultiplier(float Multiplier)
 {
 	if (Multiplier < 0.75f || Multiplier > 1.5f)
 	{
 		return;
 	}
-	EnemyHealthMultiplier = Multiplier;
+	EnemyMovementSpeedMultiplier = Multiplier;
+}
+
+void UDifficultyManager::SetEnemyHealthRegenMultiplier(float Multiplier)
+{
+	if (Multiplier < 0.5f || Multiplier > 2.f)
+	{
+		return;
+	}
+	EnemyHealthRegenMultiplier = Multiplier;
+}
+
+void UDifficultyManager::SetEnemyHealthRegenDelayAdditive(float Additive)
+{
+	if (Additive < 0.f || Additive > 3.f)
+	{
+		return;
+	}
+	EnemyHealthRegenDelayAdditive = Additive;
 }
 
 void UDifficultyManager::SetStaminaRegenMultiplier(const float Multiplier)
@@ -75,13 +105,13 @@ void UDifficultyManager::SetStaminaRegenMultiplier(const float Multiplier)
 	StaminaRegenMultiplier = Multiplier;
 }
 
-void UDifficultyManager::SetStaminaEnableRegenMultiplier(const float Multiplier)
+void UDifficultyManager::SetStaminaEnableRegenAdditive(const float Additive)
 {
-	if (Multiplier < 1.f || Multiplier > 4.f)
+	if (Additive < 1.f || Additive > 4.f)
 	{
 		return;
 	}
-	StaminaEnableRegenMultiplier = Multiplier;
+	StaminaEnableRegenAdditive = Additive;
 }
 
 float UDifficultyManager::GetEnemyDamageMultiplier() const
@@ -89,9 +119,24 @@ float UDifficultyManager::GetEnemyDamageMultiplier() const
 	return EnemyDamageMultiplier;
 }
 
-float UDifficultyManager::GetEnemyHealthMultiplier() const
+float UDifficultyManager::GetEnemyDamageReductionMultiplier() const
 {
-	return EnemyHealthMultiplier;
+	return EnemyDamageReductionMultiplier;
+}
+
+float UDifficultyManager::GetEnemyMovementSpeedMultiplier() const
+{
+	return EnemyMovementSpeedMultiplier;
+}
+
+float UDifficultyManager::GetEnemyHealthRegenMultiplier() const
+{
+	return EnemyHealthRegenMultiplier;
+}
+
+float UDifficultyManager::GetEnemyHealthRegenDelayAdditive() const
+{
+	return EnemyHealthRegenDelayAdditive;
 }
 
 float UDifficultyManager::GetStaminaRegenMultiplier() const
@@ -99,7 +144,7 @@ float UDifficultyManager::GetStaminaRegenMultiplier() const
 	return StaminaRegenMultiplier;
 }
 
-float UDifficultyManager::GetStaminaEnableRegenMultiplier() const
+float UDifficultyManager::GetStaminaEnableRegenAdditive() const
 {
-	return StaminaEnableRegenMultiplier;
+	return StaminaEnableRegenAdditive;
 }

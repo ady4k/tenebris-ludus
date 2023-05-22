@@ -22,14 +22,20 @@ public:
 	void CalculateDifficultyMultipliers();
 
 	void SetEnemyDamageMultiplier(float Multiplier);
-	void SetEnemyHealthMultiplier(float Multiplier);
+	void SetEnemyDamageReudctionMultiplier(float Multiplier);
+	void SetEnemyMovementSpeedMultiplier(float Multiplier);
+	void SetEnemyHealthRegenMultiplier(float Multiplier);
+	void SetEnemyHealthRegenDelayAdditive(float Additive);
 	void SetStaminaRegenMultiplier(float Multiplier);
-	void SetStaminaEnableRegenMultiplier(float Multiplier);
+	void SetStaminaEnableRegenAdditive(float Multiplier);
 
 	float GetEnemyDamageMultiplier() const;
-	float GetEnemyHealthMultiplier() const;
+	float GetEnemyDamageReductionMultiplier() const;
+	float GetEnemyMovementSpeedMultiplier() const;
+	float GetEnemyHealthRegenMultiplier() const;
+	float GetEnemyHealthRegenDelayAdditive() const;
 	float GetStaminaRegenMultiplier() const;
-	float GetStaminaEnableRegenMultiplier() const;
+	float GetStaminaEnableRegenAdditive() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -43,8 +49,14 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Difficulty", meta = (AllowPrivateAccess = "true"))
 	int DifficultyLevel = 1;
 
+	// -------- ENEMY DIFFICULTY SETTINGS -------- //
 	float EnemyDamageMultiplier = 1.f;
-	float EnemyHealthMultiplier = 1.f;
+	float EnemyDamageReductionMultiplier = 1.f;
+	float EnemyMovementSpeedMultiplier = 1.f;
+	float EnemyHealthRegenMultiplier = 1.f;
+	float EnemyHealthRegenDelayAdditive = 1.f;
+
+	// -------- PLAYER DIFFICULTY SETTINGS -------- //
 	float StaminaRegenMultiplier = 1.f;
-	float StaminaEnableRegenMultiplier = 1.f;
+	float StaminaEnableRegenAdditive = 1.f;
 };

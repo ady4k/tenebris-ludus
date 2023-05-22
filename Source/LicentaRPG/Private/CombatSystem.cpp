@@ -13,6 +13,7 @@ UCombatSystem::UCombatSystem()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	
 	// ...
 }
 
@@ -24,6 +25,14 @@ void UCombatSystem::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (AActor* OwningActor = GetOwner(); OwningActor != nullptr)
+	{
+		OwnerCharacter = Cast<ALicentaRPGCharacter>(OwningActor);
+		if (OwnerCharacter == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("OwnerCharacter is null"));
+		}
+	}
 	// ...
 	
 }
@@ -67,26 +76,36 @@ void UCombatSystem::SwordEndCombo()
 	IsAttacking = false;
 	AttackIndex = 0;
 	AttackStaminaCost = 5;
+	DamageValueIndex = 0;
+}
+
+void UCombatSystem::StartSwordTrace()
+{
+	GetWorld()->GetTimerManager().SetTimer(TraceTimerHandle, this, &UCombatSystem::SwordTrace, TraceTimer, true);
+
+}
+
+void UCombatSystem::StopSwordTrace()
+{
+	GetWorld()->GetTimerManager().ClearTimer(TraceTimerHandle);
 }
 
 void UCombatSystem::PlayAttackMontage()
 {
-	CheckMontageIndex();
-	if (AActor* OwningActor = GetOwner(); OwningActor != nullptr)
-	{
-		if (ALicentaRPGCharacter* ParentActor = Cast<ALicentaRPGCharacter>(OwningActor); ParentActor != nullptr)
-		{
-			UAnimMontage* MontageToPlay = AttackMontages[AttackIndex];
-			ParentActor->PlayAnimMontage(MontageToPlay, 1.0);
-			ParentActor->DecreaseStamina(AttackStaminaCost);
-		}
-	}
+	UAnimMontage* MontageToPlay = AttackMontages[AttackIndex];
+	OwnerCharacter->PlayAnimMontage(MontageToPlay, 1.0);
+	OwnerCharacter->DecreaseStamina(AttackStaminaCost);
+
 	AttackStaminaCost += 3;
+	DamageValueIndex++;
 	AttackIndex++;
+
+	CheckArraysIndexes();
 }
 
-void UCombatSystem::CheckMontageIndex()
+void UCombatSystem::CheckArraysIndexes()
 {
+	DamageValueIndex = DamageValueIndex % DamageValues.Num();
 	AttackIndex = AttackIndex % AttackMontages.Num();
 }
 
