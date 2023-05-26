@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include <EnemyCharacter.h>
 
 #include "CombatSystem.generated.h"
 
@@ -22,6 +23,9 @@ class LICENTARPG_API UCombatSystem : public UActorComponent
 	ALicentaRPGCharacter* OwnerCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
+    AEnemyCharacter* EnemyCharacter;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
 	TArray<float> DamageValues;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
@@ -31,6 +35,7 @@ public:
 	// Sets default values for this component's properties
 	UCombatSystem();
 
+	UFUNCTION(BlueprintCallable, Category = "Melee Attack")
 	void StartAttack();
 
 protected:

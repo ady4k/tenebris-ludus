@@ -6,9 +6,10 @@
 #include "GameFramework/Character.h"
 #include "../LicentaRPGGameMode.h"
 #include "CharacterStats.h"
-#include "CombatSystem.h"
 
 #include "EnemyCharacter.generated.h"
+
+class UCombatSystem;
 
 UCLASS()
 class LICENTARPG_API AEnemyCharacter : public ACharacter
@@ -19,18 +20,13 @@ class LICENTARPG_API AEnemyCharacter : public ACharacter
 	ALicentaRPGGameMode* GameModeInstance;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	class UCharacterStats* CharacterStatsG;
+	UCharacterStats* CharacterStats;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> HitReactMontages;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	class UCombatSystem* CombatSystem;
-
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	//class UEnemyAI* EnemyAI;
-
-
+	UCombatSystem* CombatSystem;
 
 public:
 	// Sets default values for this character's properties

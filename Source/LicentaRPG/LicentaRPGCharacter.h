@@ -36,43 +36,43 @@ class ALicentaRPGCharacter : public ACharacter
 	class UInputAction* JumpAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* MoveAction;
+	UInputAction* MoveAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* LookAction;
+	UInputAction* LookAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* CrouchAction;
+	UInputAction* CrouchAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* SprintAction;
+	UInputAction* SprintAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* PrimaryAction;
+	UInputAction* PrimaryAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* SecondaryAction;
+	UInputAction* SecondaryAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* InteractAction;
+	UInputAction* InteractAction;
 
 	/** User Widget */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	class UUserWidget* MainHUD;
+	UUserWidget* MainHUD;
 
 	/** Character Stats */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	class UCharacterStats* CharacterStatsG;
+	UCharacterStats* CharacterStats;
 
 	/** Combat System */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	class UCombatSystem* CombatSystemG;
+	UCombatSystem* CombatSystem;
 
 public:
 	ALicentaRPGCharacter();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Stats")
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Difficulty")
 	void ChangeDifficultyMultipliers();
@@ -124,7 +124,7 @@ private:
 
 protected:
 	// APawn interface
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -134,9 +134,9 @@ protected:
 
 public:
 	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 private:
 	// -------- MOVEMENT -------- //

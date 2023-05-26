@@ -27,10 +27,11 @@ void UCombatSystem::BeginPlay()
 
 	if (AActor* OwningActor = GetOwner(); OwningActor != nullptr)
 	{
+		// impelemntation done so if the main owner of the component is the player, the enemy character will be null and vice versa
 		OwnerCharacter = Cast<ALicentaRPGCharacter>(OwningActor);
 		if (OwnerCharacter == nullptr)
 		{
-			UE_LOG(LogTemp, Error, TEXT("OwnerCharacter is null"));
+			EnemyCharacter = Cast<AEnemyCharacter>(OwningActor);
 		}
 	}
 	// ...
@@ -93,8 +94,15 @@ void UCombatSystem::StopSwordTrace()
 void UCombatSystem::PlayAttackMontage()
 {
 	UAnimMontage* MontageToPlay = AttackMontages[AttackIndex];
-	OwnerCharacter->PlayAnimMontage(MontageToPlay, 1.0);
-	OwnerCharacter->DecreaseStamina(AttackStaminaCost);
+	if (OwnerCharacter != nullptr)
+	{
+		OwnerCharacter->PlayAnimMontage(MontageToPlay, 1.0);
+		OwnerCharacter->DecreaseStamina(AttackStaminaCost);
+	}
+	else
+	{
+		EnemyCharacter->PlayAnimMontage(MontageToPlay, 1.0);
+	}
 
 	AttackStaminaCost += 3;
 	DamageValueIndex++;

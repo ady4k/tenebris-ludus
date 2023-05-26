@@ -50,11 +50,11 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	// Create a Character Stats Component
-	CharacterStatsG = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
+	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
 	
 
 	// Create a Combat System Component
-	CombatSystemG = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
+	CombatSystem = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
 }
 
 
@@ -220,12 +220,12 @@ void ALicentaRPGCharacter::SprintStop()
 
 bool ALicentaRPGCharacter::IsOutOfStamina(float const Offset) const
 {
-	return CharacterStatsG->GetCurrentStamina() <= 0.0f + Offset;
+	return CharacterStats->GetCurrentStamina() <= 0.0f + Offset;
 }
 
 bool ALicentaRPGCharacter::HasMaximumStamina() const
 {
-		return CharacterStatsG->GetCurrentStamina() >= CharacterStatsG->GetMaxStamina();
+		return CharacterStats->GetCurrentStamina() >= CharacterStats->GetMaxStamina();
 }
 
 void ALicentaRPGCharacter::UpdateStaminaRegenTimers()
@@ -250,13 +250,13 @@ void ALicentaRPGCharacter::RegenStamina() const
 {
 	if (CanRegenStamina && !HasMaximumStamina())
 	{
-		CharacterStatsG->IncreaseStamina(StaminaRegenAmount * StaminaRegenMultiplier);
+		CharacterStats->IncreaseStamina(StaminaRegenAmount * StaminaRegenMultiplier);
 	}
 }
 
 void ALicentaRPGCharacter::DecreaseStamina(float const StaminaCost)
 {
-	CharacterStatsG->DecreaseStamina(StaminaCost);
+	CharacterStats->DecreaseStamina(StaminaCost);
 	UpdateStaminaRegenTimers();
 }
 
@@ -300,7 +300,7 @@ void ALicentaRPGCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode,
 		FallDistance = InitialVerticalPosition - LandingVerticalPosition;
 		if (LandingVelocity > LandingVelocityThreshold && FallDistance > FallDistanceThreshold)
 		{
-			float const PlayerMaxHealth = CharacterStatsG->GetMaxHealth();
+			float const PlayerMaxHealth = CharacterStats->GetMaxHealth();
 			FallDamage = CalculateFallDamage(LandingVelocity, FallDistance, PlayerMaxHealth);
 			TakeDamage(FallDamage, FDamageEvent(), nullptr, nullptr);
 		}
@@ -336,8 +336,8 @@ float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& D
                                        AActor* DamageCauser)
 {
 	float const ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	CharacterStatsG->DecreaseHealth(ActualDamage);
-	if (CharacterStatsG->GetCurrentHealth() <= 0.f)
+	CharacterStats->DecreaseHealth(ActualDamage);
+	if (CharacterStats->GetCurrentHealth() <= 0.f)
 	{
 		OnCharacterDeath();
 	}
@@ -353,7 +353,7 @@ void ALicentaRPGCharacter::InvokeAttack()
 {
 	if (!IsOutOfStamina(5.f) && IsCharacterOnGround())
 	{
-		CombatSystemG->StartAttack();
+		CombatSystem->StartAttack();
 		DisableStaminaRegen();
 	}
 }
