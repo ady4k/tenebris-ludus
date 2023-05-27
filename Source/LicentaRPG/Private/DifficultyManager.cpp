@@ -46,6 +46,7 @@ void UDifficultyManager::CalculateDifficultyMultipliers()
 	SetEnemyMovementSpeedMultiplier(0.75f + DifficultyLevel * 0.25f);
 	SetEnemyHealthRegenMultiplier(0.5f + DifficultyLevel * 0.5f);
 	SetEnemyHealthRegenDelayAdditive(10.f - DifficultyLevel * 2.5f);
+	SetEnemyAttackSpeed(1.6f - DifficultyLevel * 0.4f);
 
 	SetStaminaRegenMultiplier(1.25f - DifficultyLevel * 0.25f);
 	SetStaminaEnableRegenAdditive(1.f + DifficultyLevel * 1.f);
@@ -114,6 +115,15 @@ void UDifficultyManager::SetStaminaEnableRegenAdditive(const float Additive)
 	StaminaEnableRegenAdditive = Additive;
 }
 
+void UDifficultyManager::SetEnemyAttackSpeed(const float AttackSpeed)
+{
+	if (AttackSpeed < 0.39f || AttackSpeed > 1.6f)
+	{
+		return;
+	}
+	EnemyAttackSpeed = AttackSpeed;
+}
+
 float UDifficultyManager::GetEnemyDamageMultiplier() const
 {
 	return EnemyDamageMultiplier;
@@ -147,4 +157,9 @@ float UDifficultyManager::GetStaminaRegenMultiplier() const
 float UDifficultyManager::GetStaminaEnableRegenAdditive() const
 {
 	return StaminaEnableRegenAdditive;
+}
+
+float UDifficultyManager::GetEnemyAttackSpeed() const
+{
+	return EnemyAttackSpeed;
 }

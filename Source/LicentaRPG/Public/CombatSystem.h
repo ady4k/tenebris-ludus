@@ -38,6 +38,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Melee Attack")
 	void StartAttack();
 
+	void ResetAttack();
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Melee Attack")
 	void SwordAttackCombo();
@@ -56,6 +58,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Misc Attack")
 	void SphereTrace();
+
+	
 
 private:
 	void SwordAttack();

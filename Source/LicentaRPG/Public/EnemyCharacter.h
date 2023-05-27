@@ -20,13 +20,13 @@ class LICENTARPG_API AEnemyCharacter : public ACharacter
 	ALicentaRPGGameMode* GameModeInstance;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	UCharacterStats* CharacterStats;
+	UCharacterStats* CharacterStatsG;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> HitReactMontages;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	UCombatSystem* CombatSystem;
+	UCombatSystem* CombatSystemG;
 
 public:
 	// Sets default values for this character's properties
@@ -87,6 +87,10 @@ private:
 
 	// -------- MOVEMENT -------- //
 	float MaxMovementSpeed = 250.0f;
+
+	// -------- COMBAT -------- //
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	float AttackSpeed = 1.2f;
 
 // -------- CONSTANTS -------- //
 	// -------- MOVEMENT -------- //

@@ -46,6 +46,11 @@ void UCombatSystem::StartAttack()
 	}
 }
 
+void UCombatSystem::ResetAttack()
+{
+	SwordEndCombo();
+}
+
 void UCombatSystem::SwordAttack()
 {
 	if (IsAttacking)

@@ -10,9 +10,9 @@ AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("EnemyCharacterStats"));
+	CharacterStatsG = CreateDefaultSubobject<UCharacterStats>(TEXT("EneCharacterStats"));
 
-	CombatSystem = CreateDefaultSubobject<UCombatSystem>(TEXT("EnemyCombatSystem"));
+	CombatSystemG = CreateDefaultSubobject<UCombatSystem>(TEXT("EneCombatSystem"));
 }
 
 
@@ -72,8 +72,8 @@ void AEnemyCharacter::RegenHealth()
 {
 	if (CanRegenHealth)
 	{
-		CharacterStats->IncreaseHealth(HealthRegenAmount * HealthRegenMultiplier);
-		if (CharacterStats->GetCurrentHealth() >= CharacterStats->GetMaxHealth())
+		CharacterStatsG->IncreaseHealth(HealthRegenAmount * HealthRegenMultiplier);
+		if (CharacterStatsG->GetCurrentHealth() >= CharacterStatsG->GetMaxHealth())
 		{
 			DisableHealthRegen();
 		}
@@ -89,9 +89,10 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	if (IsInvincible == false)
 	{
 		GetAndPlayHitReactMontage();
+		CombatSystemG->ResetAttack();
 
-		CharacterStats->DecreaseHealth(ActualDamage * DamageReductionMultiplier);
-		if (CharacterStats->GetCurrentHealth() <= 0.f)
+		CharacterStatsG->DecreaseHealth(ActualDamage * DamageReductionMultiplier);
+		if (CharacterStatsG->GetCurrentHealth() <= 0.f)
 		{
 			OnCharacterDeath();
 			IsInvincible = true;
@@ -150,6 +151,7 @@ void AEnemyCharacter::ChangeDifficultyMultipliers()
 	DamageReductionMultiplier = GameModeInstance->GetDifficultyManager()->GetEnemyDamageReductionMultiplier();
 	HealthRegenMultiplier = GameModeInstance->GetDifficultyManager()->GetEnemyHealthRegenMultiplier();
 	HealthRegenDelayAdditive = GameModeInstance->GetDifficultyManager()->GetEnemyHealthRegenDelayAdditive();
+	AttackSpeed = GameModeInstance->GetDifficultyManager()->GetEnemyAttackSpeed();
 
 	float const MovementSpeedMultiplier = GameModeInstance->GetDifficultyManager()->GetEnemyMovementSpeedMultiplier();
 	MaxMovementSpeed = BaseMaxMovementSpeed * MovementSpeedMultiplier;
