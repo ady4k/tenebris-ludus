@@ -336,11 +336,18 @@ float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& D
                                        AActor* DamageCauser)
 {
 	float const ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	CharacterStats->DecreaseHealth(ActualDamage);
-	if (CharacterStats->GetCurrentHealth() <= 0.f)
+
+	if (IsInvincible == false)
 	{
-		OnCharacterDeath();
+		CharacterStats->DecreaseHealth(ActualDamage);
+		if (CharacterStats->GetCurrentHealth() <= 0.f)
+		{
+			OnCharacterDeath();
+		}
+		IsInvincible = true;
+		GetWorldTimerManager().SetTimer(DisableInvincibilityTimerHandle, this, &ALicentaRPGCharacter::DisableInvincibility, InvincibilityTime, false);
 	}
+
 	return ActualDamage;
 }
 
@@ -356,4 +363,9 @@ void ALicentaRPGCharacter::InvokeAttack()
 		CombatSystem->StartAttack();
 		DisableStaminaRegen();
 	}
+}
+
+void ALicentaRPGCharacter::DisableInvincibility()
+{
+	IsInvincible = false;
 }

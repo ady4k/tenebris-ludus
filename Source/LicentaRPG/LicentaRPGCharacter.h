@@ -121,6 +121,7 @@ private:
 
 	// -------- COMBAT SYSTEM -------- //
 	void InvokeAttack();
+	void DisableInvincibility();
 
 protected:
 	// APawn interface
@@ -160,6 +161,10 @@ private:
 	float StaminaRegenMultiplier = 1.f;
 	float StaminaEnableRegenAdditive = 1.f;
 
+	// -------- COMBAT SYSTEM -------- //
+	FTimerHandle DisableInvincibilityTimerHandle;
+	bool IsInvincible = false;
+
 // -------- CONSTANTS -------- //
 	// -------- MOVEMENT -------- //
 	float const MaxWalkSpeed = 300.0f;
@@ -181,4 +186,7 @@ private:
 	float const FallDistanceThreshold = 600.0f;
 	float const LandingVelocityThreshold = 1300.0f;
 	float const FallDamageMultiplier = 0.0001f;
+
+	// -------- COMBAT SYSTEM -------- //
+	float const InvincibilityTime = 0.5f;
 };
