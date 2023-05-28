@@ -51,6 +51,11 @@ void UCombatSystem::ResetAttack()
 	SwordEndCombo();
 }
 
+bool UCombatSystem::GetIsAttacking() const
+{
+	return IsAttacking;
+}
+
 void UCombatSystem::SwordAttack()
 {
 	if (IsAttacking)

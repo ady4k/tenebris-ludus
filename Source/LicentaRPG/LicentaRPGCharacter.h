@@ -56,17 +56,23 @@ class ALicentaRPGCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* DodgeAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* DodgeAnimation;
+
 	/** User Widget */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables, meta = (AllowPrivateAccess = "true"))
 	UUserWidget* MainHUD;
 
 	/** Character Stats */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	UCharacterStats* CharacterStatsG;
+	UCharacterStats* CharacterStats;
 
 	/** Combat System */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	UCombatSystem* CombatSystemG;
+	UCombatSystem* CombatSystem;
 
 public:
 	ALicentaRPGCharacter();
@@ -95,11 +101,14 @@ protected:
 	void SprintStart();
 	void SprintStop();
 
+	/** Called for dodging input */
+	void Dodge();
 
+	UFUNCTION(BlueprintCallable, Category = "Dodging")
+	void OnRollEnd();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Physics")
 	void OnCharacterDeath();
-
 private:
 	// -------- STAMINA SYSTEM -------- //
 	bool IsOutOfStamina(float const Offset) const;
@@ -165,6 +174,9 @@ private:
 	FTimerHandle DisableInvincibilityTimerHandle;
 	bool IsInvincible = false;
 
+	// -------- DODGING -------- //
+	bool IsDodging = false;
+
 // -------- CONSTANTS -------- //
 	// -------- MOVEMENT -------- //
 	float const MaxWalkSpeed = 300.0f;
@@ -173,14 +185,15 @@ private:
 	float const MaxCrouchSprintSpeed = 300.0f;
 
 	// -------- STAMINA REGEN -------- //
-	float const EnableStaminaRegenDelay = 2.0f;
+	float const EnableStaminaRegenDelay = 0.5f;
 	float const StaminaRegenDelay = 0.1f;
-	float const StaminaRegenAmount = 3.5f;
+	float const StaminaRegenAmount = 4.0f;
 
 	// ------- STAMINA COSTS ------- //
 	float const CrouchSprintStaminaCost = 7.0f;
 	float const SprintStaminaCost = 10.0f;
 	float const JumpStaminaCost = 15.0f;
+	float const RollStaminaCost = 15.0f;
 
 	// -------- FALL DAMAGE -------- //
 	float const FallDistanceThreshold = 600.0f;

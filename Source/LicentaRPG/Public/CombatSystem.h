@@ -40,6 +40,8 @@ public:
 
 	void ResetAttack();
 
+	bool GetIsAttacking() const;
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Melee Attack")
 	void SwordAttackCombo();
@@ -58,8 +60,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Misc Attack")
 	void SphereTrace();
-
-	
 
 private:
 	void SwordAttack();

@@ -50,11 +50,11 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	// Create a Character Stats Component
-	CharacterStatsG = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
+	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
 	
 
 	// Create a Combat System Component
-	CombatSystemG = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
+	CombatSystem = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
 }
 
 
@@ -132,6 +132,8 @@ void ALicentaRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		// Attacking
 		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::InvokeAttack);
 
+		// Dodging
+		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::Dodge);
 	}
 }
 
@@ -213,6 +215,31 @@ void ALicentaRPGCharacter::SprintStop()
 	IsSprinting = false;
 }
 
+void ALicentaRPGCharacter::Dodge()
+{
+	if (!IsDodging && !IsOutOfStamina(RollStaminaCost))
+	{
+		IsDodging = true;
+		IsInvincible = true;
+		CharacterStats->DecreaseStamina(RollStaminaCost);
+		if (CombatSystem->GetIsAttacking())
+		{
+			CombatSystem->ResetAttack();
+		}
+		PlayAnimMontage(DodgeAnimation, 1.0f);
+	}
+}
+
+// ---------------------------------------------------------
+// Dodge System
+// ---------------------------------------------------------
+
+void ALicentaRPGCharacter::OnRollEnd()
+{
+	DisableInvincibility();
+	IsDodging = false;
+}
+
 
 // ---------------------------------------------------------
 // Stamina System
@@ -220,12 +247,12 @@ void ALicentaRPGCharacter::SprintStop()
 
 bool ALicentaRPGCharacter::IsOutOfStamina(float const Offset) const
 {
-	return CharacterStatsG->GetCurrentStamina() <= 0.0f + Offset;
+	return CharacterStats->GetCurrentStamina() <= 0.0f + Offset;
 }
 
 bool ALicentaRPGCharacter::HasMaximumStamina() const
 {
-		return CharacterStatsG->GetCurrentStamina() >= CharacterStatsG->GetMaxStamina();
+		return CharacterStats->GetCurrentStamina() >= CharacterStats->GetMaxStamina();
 }
 
 void ALicentaRPGCharacter::UpdateStaminaRegenTimers()
@@ -250,13 +277,13 @@ void ALicentaRPGCharacter::RegenStamina() const
 {
 	if (CanRegenStamina && !HasMaximumStamina())
 	{
-		CharacterStatsG->IncreaseStamina(StaminaRegenAmount * StaminaRegenMultiplier);
+		CharacterStats->IncreaseStamina(StaminaRegenAmount * StaminaRegenMultiplier);
 	}
 }
 
 void ALicentaRPGCharacter::DecreaseStamina(float const StaminaCost)
 {
-	CharacterStatsG->DecreaseStamina(StaminaCost);
+	CharacterStats->DecreaseStamina(StaminaCost);
 	UpdateStaminaRegenTimers();
 }
 
@@ -300,7 +327,7 @@ void ALicentaRPGCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode,
 		FallDistance = InitialVerticalPosition - LandingVerticalPosition;
 		if (LandingVelocity > LandingVelocityThreshold && FallDistance > FallDistanceThreshold)
 		{
-			float const PlayerMaxHealth = CharacterStatsG->GetMaxHealth();
+			float const PlayerMaxHealth = CharacterStats->GetMaxHealth();
 			FallDamage = CalculateFallDamage(LandingVelocity, FallDistance, PlayerMaxHealth);
 			TakeDamage(FallDamage, FDamageEvent(), nullptr, nullptr);
 		}
@@ -339,8 +366,8 @@ float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& D
 
 	if (IsInvincible == false)
 	{
-		CharacterStatsG->DecreaseHealth(ActualDamage);
-		if (CharacterStatsG->GetCurrentHealth() <= 0.f)
+		CharacterStats->DecreaseHealth(ActualDamage);
+		if (CharacterStats->GetCurrentHealth() <= 0.f)
 		{
 			OnCharacterDeath();
 		}
@@ -358,9 +385,9 @@ float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& D
 
 void ALicentaRPGCharacter::InvokeAttack()
 {
-	if (!IsOutOfStamina(5.f) && IsCharacterOnGround())
+	if (!IsOutOfStamina(5.f) && IsCharacterOnGround() && !IsDodging)
 	{
-		CombatSystemG->StartAttack();
+		CombatSystem->StartAttack();
 		DisableStaminaRegen();
 	}
 }
