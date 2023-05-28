@@ -50,11 +50,12 @@ void UDifficultyManager::CalculateDifficultyMultipliers()
 
 	SetStaminaRegenMultiplier(1.25f - DifficultyLevel * 0.25f);
 	SetStaminaEnableRegenAdditive(1.f + DifficultyLevel * 1.f);
+	SetExperienceGainMultiplier(0.5f + DifficultyLevel * 0.5f);
 }
 
 void UDifficultyManager::SetEnemyDamageMultiplier(const float Multiplier)
 {
-	if (Multiplier < 0.75f || Multiplier > 1.5f)
+	if (Multiplier < 0.74f || Multiplier > 1.5f)
 	{
 		return;
 	}
@@ -63,7 +64,7 @@ void UDifficultyManager::SetEnemyDamageMultiplier(const float Multiplier)
 
 void UDifficultyManager::SetEnemyDamageReudctionMultiplier(const float Multiplier)
 {
-	if (Multiplier < 0.5f || Multiplier > 1.25f)
+	if (Multiplier < 0.49f || Multiplier > 1.25f)
 	{
 		return;
 	}
@@ -72,7 +73,7 @@ void UDifficultyManager::SetEnemyDamageReudctionMultiplier(const float Multiplie
 
 void UDifficultyManager::SetEnemyMovementSpeedMultiplier(float Multiplier)
 {
-	if (Multiplier < 0.75f || Multiplier > 1.5f)
+	if (Multiplier < 0.74f || Multiplier > 1.5f)
 	{
 		return;
 	}
@@ -81,7 +82,7 @@ void UDifficultyManager::SetEnemyMovementSpeedMultiplier(float Multiplier)
 
 void UDifficultyManager::SetEnemyHealthRegenMultiplier(float Multiplier)
 {
-	if (Multiplier < 0.5f || Multiplier > 2.f)
+	if (Multiplier < 0.49f || Multiplier > 2.f)
 	{
 		return;
 	}
@@ -99,7 +100,7 @@ void UDifficultyManager::SetEnemyHealthRegenDelayAdditive(float Additive)
 
 void UDifficultyManager::SetStaminaRegenMultiplier(const float Multiplier)
 {
-	if (Multiplier < 0.5f || Multiplier > 1.25f)
+	if (Multiplier < 0.49f || Multiplier > 1.25f)
 	{
 		return;
 	}
@@ -108,7 +109,7 @@ void UDifficultyManager::SetStaminaRegenMultiplier(const float Multiplier)
 
 void UDifficultyManager::SetStaminaEnableRegenAdditive(const float Additive)
 {
-	if (Additive < 1.f || Additive > 4.f)
+	if (Additive < .99f || Additive > 4.f)
 	{
 		return;
 	}
@@ -122,6 +123,15 @@ void UDifficultyManager::SetEnemyAttackSpeed(const float AttackSpeed)
 		return;
 	}
 	EnemyAttackSpeed = AttackSpeed;
+}
+
+void UDifficultyManager::SetExperienceGainMultiplier(float Multiplier)
+{
+	if (Multiplier < 0.49f || Multiplier > 2.0f)
+	{
+		return;
+	}
+	ExperienceGainMultiplier = Multiplier;
 }
 
 float UDifficultyManager::GetEnemyDamageMultiplier() const
@@ -162,4 +172,9 @@ float UDifficultyManager::GetStaminaEnableRegenAdditive() const
 float UDifficultyManager::GetEnemyAttackSpeed() const
 {
 	return EnemyAttackSpeed;
+}
+
+float UDifficultyManager::GetExperienceGainMultiplier() const
+{
+	return ExperienceGainMultiplier;
 }

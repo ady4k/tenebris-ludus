@@ -240,10 +240,21 @@ void ALicentaRPGCharacter::OnRollEnd()
 	IsDodging = false;
 }
 
+// ---------------------------------------------------------
+// Character Stats
+// ---------------------------------------------------------
+
+void ALicentaRPGCharacter::GainExperience(float const Experience)
+{
+	float const ExperienceGained = Experience * ExperienceGainMultiplier;
+	CharacterStats->IncreaseExperience(ExperienceGained);
+}
 
 // ---------------------------------------------------------
 // Stamina System
 // ---------------------------------------------------------
+
+
 
 bool ALicentaRPGCharacter::IsOutOfStamina(float const Offset) const
 {
@@ -350,6 +361,7 @@ void ALicentaRPGCharacter::ChangeDifficultyMultipliers()
 {
 	StaminaRegenMultiplier = GameModeInstance->GetDifficultyManager()->GetStaminaRegenMultiplier();
 	StaminaEnableRegenAdditive = GameModeInstance->GetDifficultyManager()->GetStaminaEnableRegenAdditive();
+	ExperienceGainMultiplier = GameModeInstance->GetDifficultyManager()->GetExperienceGainMultiplier();
 }
 
 

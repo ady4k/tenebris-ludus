@@ -109,6 +109,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Physics")
 	void OnCharacterDeath();
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		void GainExperience(float const Experience);
 private:
 	// -------- STAMINA SYSTEM -------- //
 	bool IsOutOfStamina(float const Offset) const;
@@ -169,6 +172,7 @@ private:
 	// -------- DIFFICULTY -------- //
 	float StaminaRegenMultiplier = 1.f;
 	float StaminaEnableRegenAdditive = 1.f;
+	float ExperienceGainMultiplier = 1.f;
 
 	// -------- COMBAT SYSTEM -------- //
 	FTimerHandle DisableInvincibilityTimerHandle;

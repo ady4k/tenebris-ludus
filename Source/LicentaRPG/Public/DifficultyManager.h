@@ -28,7 +28,8 @@ public:
 	void SetEnemyHealthRegenDelayAdditive(float Additive);
 	void SetStaminaRegenMultiplier(float Multiplier);
 	void SetStaminaEnableRegenAdditive(float Multiplier);
-	void SetEnemyAttackSpeed(float Additive);
+	void SetEnemyAttackSpeed(float AttackSpeed);
+	void SetExperienceGainMultiplier(float Multiplier);
 
 	float GetEnemyDamageMultiplier() const;
 	float GetEnemyDamageReductionMultiplier() const;
@@ -38,6 +39,7 @@ public:
 	float GetStaminaRegenMultiplier() const;
 	float GetStaminaEnableRegenAdditive() const;
 	float GetEnemyAttackSpeed() const;
+	float GetExperienceGainMultiplier() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -62,4 +64,5 @@ private:
 	// -------- PLAYER DIFFICULTY SETTINGS -------- //
 	float StaminaRegenMultiplier = 1.f;
 	float StaminaEnableRegenAdditive = 1.f;
+	float ExperienceGainMultiplier = 1.f;
 };

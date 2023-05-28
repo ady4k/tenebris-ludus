@@ -92,6 +92,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	float AttackSpeed = 1.2f;
 
+	// -------- EXPERIENCE -------- //
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Experience", meta = (AllowPrivateAccess = "true"))
+	float ExperienceGiven = 50.f;
+
 // -------- CONSTANTS -------- //
 	// -------- MOVEMENT -------- //
 	float const BaseMaxMovementSpeed = 250.0f;
