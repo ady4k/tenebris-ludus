@@ -54,6 +54,16 @@ void UCharacterStats::DecreaseHealth(float const Amount)
 	UpdateHealthBar(CurrentHealth, MaxHealth);
 }
 
+void UCharacterStats::SetCurrentHealth(float const Amount)
+{
+	CurrentHealth = Amount;
+	if (CurrentHealth > MaxHealth)
+	{
+		CurrentHealth = MaxHealth;
+	}
+	UpdateHealthBar(CurrentHealth, MaxHealth);
+}
+
 float UCharacterStats::GetCurrentHealth() const
 {
 	return CurrentHealth;
@@ -93,6 +103,16 @@ void UCharacterStats::DecreaseMana(float const Amount)
 	UpdateManaBar(CurrentMana, MaxMana);
 }
 
+void UCharacterStats::SetCurrentMana(float const Amount)
+{
+	CurrentMana = Amount;
+	if (CurrentMana > MaxMana)
+	{
+		CurrentMana = MaxMana;
+	}
+	UpdateManaBar(CurrentMana, MaxMana);
+}
+
 float UCharacterStats::GetCurrentMana() const
 {
 	return CurrentMana;
@@ -127,6 +147,16 @@ void UCharacterStats::DecreaseStamina(float const Amount)
 	UpdateStaminaBar(CurrentStamina, MaxStamina);
 }
 
+void UCharacterStats::SetCurrentStamina(float const Amount)
+{
+	CurrentStamina = Amount;
+	if (CurrentStamina > MaxStamina)
+	{
+				CurrentStamina = MaxStamina;
+	}
+	UpdateStaminaBar(CurrentStamina, MaxStamina);
+}
+
 float UCharacterStats::GetCurrentStamina() const
 {
 	return CurrentStamina;
@@ -154,6 +184,17 @@ void UCharacterStats::IncreaseExperience(float const Amount)
 	UpdateExperienceBar(CurrentExperience, MaxExperience);
 }
 
+void UCharacterStats::SetCurrentExperience(float const Amount)
+{
+	CurrentExperience = Amount;
+	UpdateExperienceBar(CurrentExperience, MaxExperience);
+}
+
+float UCharacterStats::GetCurrentExperience() const
+{
+	return CurrentExperience;
+}
+
 void UCharacterStats::IncreaseLevel()
 {
 	CurrentLevel++;
@@ -163,8 +204,59 @@ void UCharacterStats::IncreaseLevel()
 	UpdateLevelText(CurrentLevel);
 }
 
+void UCharacterStats::SetCurrentLevel(int32 const Amount)
+{
+	CurrentLevel = Amount;
+	UpdateLevelText(CurrentLevel);
+}
+
+int32 UCharacterStats::GetCurrentLevel() const
+{
+	return CurrentLevel;
+}
+
 
 // ----- STATS POINTS -----
+void UCharacterStats::SetStrength(int32 const Amount)
+{
+	Strength = Amount;
+}
+
+void UCharacterStats::SetDexterity(int32 const Amount)
+{
+	Dexterity = Amount;
+}
+
+void UCharacterStats::SetIntelligence(int32 const Amount)
+{
+	Intelligence = Amount;
+}
+
+int32 UCharacterStats::GetStrength() const
+{
+	return Strength;
+}
+
+int32 UCharacterStats::GetDexterity() const
+{
+	return Dexterity;
+}
+
+int32 UCharacterStats::GetIntelligence() const
+{
+	return Intelligence;
+}
+
+void UCharacterStats::SetAvailableStatsPoints(int32 const Amount)
+{
+	AvailableStatsPoints = Amount;
+}
+
+int32 UCharacterStats::GetAvailableStatsPoints() const
+{
+	return AvailableStatsPoints;
+}
+
 void UCharacterStats::IncreaseStats(EStatsSelection StatToChange)
 {
 	switch (StatToChange)
@@ -195,3 +287,4 @@ void UCharacterStats::CalculateStats()
 	UpdateStaminaBar(CurrentStamina, MaxStamina);
 	UpdateExperienceBar(CurrentExperience, MaxExperience);
 }
+

@@ -46,26 +46,43 @@ public:
 	void IncreaseMaxHealth(float const Amount);
 	void IncreaseHealth(float const Amount);
 	void DecreaseHealth(float const Amount);
+	void SetCurrentHealth(float const Amount);
 	float GetCurrentHealth() const;
 	float GetMaxHealth() const;
 
 	void IncreaseMaxMana(float const Amount);
 	void IncreaseMana(float const Amount);
 	void DecreaseMana(float const Amount);
+	void SetCurrentMana(float const Amount);
 	float GetCurrentMana() const;
 
 	void IncreaseMaxStamina(float const Amount);
 	void IncreaseStamina(float const Amount);
 	void DecreaseStamina(float const Amount);
+	void SetCurrentStamina(float const Amount);
 	float GetCurrentStamina() const;
 	float GetMaxStamina() const;
 
 	void IncreaseMaxExperience(float const Amount);
 	void IncreaseExperience(float const Amount);
+	void SetCurrentExperience(float const Amount);
+	float GetCurrentExperience() const;
 
 	void IncreaseLevel();
+	void SetCurrentLevel(int32 const Amount);
+	int32 GetCurrentLevel() const;
 	void IncreaseStats(EStatsSelection StatToChange);
 	void CalculateStats();
+
+	void SetStrength(int32 const Amount);
+	void SetDexterity(int32 const Amount);
+	void SetIntelligence(int32 const Amount);
+	int32 GetStrength() const;
+	int32 GetDexterity() const;
+	int32 GetIntelligence() const;
+
+	void SetAvailableStatsPoints(int32 const Amount);
+	int32 GetAvailableStatsPoints() const;
 
 private:
 	// Character stats

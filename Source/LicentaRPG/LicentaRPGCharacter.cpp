@@ -10,7 +10,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/DamageEvents.h"
 
-
 //////////////////////////////////////////////////////////////////////////
 // ALicentaRPGCharacter
 ALicentaRPGCharacter::ALicentaRPGCharacter()
@@ -56,7 +55,6 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 	// Create a Combat System Component
 	CombatSystem = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
 }
-
 
 
 void ALicentaRPGCharacter::BeginPlay()
@@ -230,6 +228,7 @@ void ALicentaRPGCharacter::Dodge()
 	}
 }
 
+
 // ---------------------------------------------------------
 // Dodge System
 // ---------------------------------------------------------
@@ -239,6 +238,7 @@ void ALicentaRPGCharacter::OnRollEnd()
 	DisableInvincibility();
 	IsDodging = false;
 }
+
 
 // ---------------------------------------------------------
 // Character Stats
@@ -250,11 +250,10 @@ void ALicentaRPGCharacter::GainExperience(float const Experience)
 	CharacterStats->IncreaseExperience(ExperienceGained);
 }
 
+
 // ---------------------------------------------------------
 // Stamina System
 // ---------------------------------------------------------
-
-
 
 bool ALicentaRPGCharacter::IsOutOfStamina(float const Offset) const
 {
@@ -363,8 +362,6 @@ void ALicentaRPGCharacter::ChangeDifficultyMultipliers()
 	StaminaEnableRegenAdditive = GameModeInstance->GetDifficultyManager()->GetStaminaEnableRegenAdditive();
 	ExperienceGainMultiplier = GameModeInstance->GetDifficultyManager()->GetExperienceGainMultiplier();
 }
-
-
 
 
 // ---------------------------------------------------------

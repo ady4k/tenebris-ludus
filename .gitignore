@@ -73,6 +73,9 @@ Plugins/*/Intermediate/*
 # Cache files for the editor to use
 DerivedDataCache/*
 
+# Config files for C++ classes
+Source/LicentaRPG/Public/Config/
+
 .vs
 .vscode
 .ignore

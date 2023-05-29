@@ -48,7 +48,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Physics")
 	void DestroyActor();
 
-
 private:
 	// -------- DAMAGE -------- //
 	void GetAndPlayHitReactMontage();
