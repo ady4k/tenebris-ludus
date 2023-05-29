@@ -16,7 +16,7 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-		
+
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -42,7 +42,8 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	// Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
@@ -50,7 +51,7 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 
 	// Create a Character Stats Component
 	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
-	
+
 
 	// Create a Combat System Component
 	CombatSystem = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
@@ -61,11 +62,12 @@ void ALicentaRPGCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
+	
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
@@ -90,7 +92,7 @@ void ALicentaRPGCharacter::Tick(float DeltaTime)
 	{
 		if (!IsOutOfStamina(0.1f))
 		{
-			float const StaminaCost = IsCrouched ? CrouchSprintStaminaCost : SprintStaminaCost;
+			const float StaminaCost = IsCrouched ? CrouchSprintStaminaCost : SprintStaminaCost;
 			if (IsCharacterOnGround() && IsCharacterMoving())
 			{
 				DecreaseStamina(StaminaCost * DeltaTime);
@@ -102,14 +104,15 @@ void ALicentaRPGCharacter::Tick(float DeltaTime)
 		}
 	}
 }
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
 void ALicentaRPGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
 		//Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
@@ -124,14 +127,26 @@ void ALicentaRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::Crouch);
 
 		// Sprinting
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::SprintStart);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ALicentaRPGCharacter::SprintStop);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this,
+		                                   &ALicentaRPGCharacter::SprintStart);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this,
+		                                   &ALicentaRPGCharacter::SprintStop);
 
 		// Attacking
-		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::InvokeAttack);
+		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this,
+		                                   &ALicentaRPGCharacter::InvokeAttack);
 
 		// Dodging
 		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::Dodge);
+
+		// Saving
+		EnhancedInputComponent->BindAction(QuickSaveAction, ETriggerEvent::Started, this,
+		                                   &ALicentaRPGCharacter::QuickSave);
+		EnhancedInputComponent->BindAction(QuickLoadAction, ETriggerEvent::Started, this,
+		                                   &ALicentaRPGCharacter::QuickLoad);
+
+		// Pausing
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::Pause);
 	}
 }
 
@@ -161,7 +176,7 @@ void ALicentaRPGCharacter::Move(const FInputActionValue& Value)
 
 		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
+
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
@@ -228,6 +243,16 @@ void ALicentaRPGCharacter::Dodge()
 	}
 }
 
+void ALicentaRPGCharacter::QuickSave()
+{
+	GameModeInstance->SaveGame("quick-save");
+}
+
+void ALicentaRPGCharacter::QuickLoad()
+{
+	GameModeInstance->LoadGame("quick-save");
+}
+
 
 // ---------------------------------------------------------
 // Dodge System
@@ -239,14 +264,13 @@ void ALicentaRPGCharacter::OnRollEnd()
 	IsDodging = false;
 }
 
-
 // ---------------------------------------------------------
 // Character Stats
 // ---------------------------------------------------------
 
-void ALicentaRPGCharacter::GainExperience(float const Experience)
+void ALicentaRPGCharacter::GainExperience(const float Experience)
 {
-	float const ExperienceGained = Experience * ExperienceGainMultiplier;
+	const float ExperienceGained = Experience * ExperienceGainMultiplier;
 	CharacterStats->IncreaseExperience(ExperienceGained);
 }
 
@@ -255,26 +279,29 @@ void ALicentaRPGCharacter::GainExperience(float const Experience)
 // Stamina System
 // ---------------------------------------------------------
 
-bool ALicentaRPGCharacter::IsOutOfStamina(float const Offset) const
+bool ALicentaRPGCharacter::IsOutOfStamina(const float Offset) const
 {
 	return CharacterStats->GetCurrentStamina() <= 0.0f + Offset;
 }
 
 bool ALicentaRPGCharacter::HasMaximumStamina() const
 {
-		return CharacterStats->GetCurrentStamina() >= CharacterStats->GetMaxStamina();
+	return CharacterStats->GetCurrentStamina() >= CharacterStats->GetMaxStamina();
 }
 
 void ALicentaRPGCharacter::UpdateStaminaRegenTimers()
 {
 	GetWorld()->GetTimerManager().ClearTimer(EnableStaminaRegenTimerHandle);
-	GetWorld()->GetTimerManager().SetTimer(EnableStaminaRegenTimerHandle, this, &ALicentaRPGCharacter::EnableStaminaRegen, EnableStaminaRegenDelay + StaminaEnableRegenAdditive, false);
+	GetWorld()->GetTimerManager().SetTimer(EnableStaminaRegenTimerHandle, this,
+	                                       &ALicentaRPGCharacter::EnableStaminaRegen,
+	                                       EnableStaminaRegenDelay + StaminaEnableRegenAdditive, false);
 }
 
 void ALicentaRPGCharacter::EnableStaminaRegen()
 {
 	CanRegenStamina = true;
-	GetWorldTimerManager().SetTimer(StaminaRegenTimerHandle, this, &ALicentaRPGCharacter::RegenStamina, StaminaRegenDelay, true);
+	GetWorldTimerManager().SetTimer(StaminaRegenTimerHandle, this, &ALicentaRPGCharacter::RegenStamina,
+	                                StaminaRegenDelay, true);
 }
 
 void ALicentaRPGCharacter::DisableStaminaRegen()
@@ -291,7 +318,7 @@ void ALicentaRPGCharacter::RegenStamina() const
 	}
 }
 
-void ALicentaRPGCharacter::DecreaseStamina(float const StaminaCost)
+void ALicentaRPGCharacter::DecreaseStamina(const float StaminaCost)
 {
 	CharacterStats->DecreaseStamina(StaminaCost);
 	UpdateStaminaRegenTimers();
@@ -302,7 +329,7 @@ bool ALicentaRPGCharacter::IsCharacterMoving() const
 	return GetVelocity().Size() > 0.0f;
 }
 
-void ALicentaRPGCharacter::SetMaxWalkSpeed(float const Speed) const
+void ALicentaRPGCharacter::SetMaxWalkSpeed(const float Speed) const
 {
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
 }
@@ -319,35 +346,37 @@ bool ALicentaRPGCharacter::IsCharacterOnGround() const
 
 void ALicentaRPGCharacter::Landed(const FHitResult& Hit)
 {
-	Super::OnLanded(Hit);
+	OnLanded(Hit);
 	LandingVelocity = GetVelocity().Size();
 }
 
 void ALicentaRPGCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
-	if (GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Falling)
+	if (GetCharacterMovement()->MovementMode == MOVE_Falling)
 	{
 		InitialVerticalPosition = GetActorLocation().Z;
 		IsCrouched = false;
 	}
-	if (PrevMovementMode == EMovementMode::MOVE_Falling)
+	if (PrevMovementMode == MOVE_Falling)
 	{
 		LandingVerticalPosition = GetActorLocation().Z;
 		FallDistance = InitialVerticalPosition - LandingVerticalPosition;
 		if (LandingVelocity > LandingVelocityThreshold && FallDistance > FallDistanceThreshold)
 		{
-			float const PlayerMaxHealth = CharacterStats->GetMaxHealth();
+			const float PlayerMaxHealth = CharacterStats->GetMaxHealth();
 			FallDamage = CalculateFallDamage(LandingVelocity, FallDistance, PlayerMaxHealth);
 			TakeDamage(FallDamage, FDamageEvent(), nullptr, nullptr);
 		}
 	}
 }
 
-float ALicentaRPGCharacter::CalculateFallDamage(float const OnLandingVelocity, float const FallingDistance, float const PlayerMaxHealth) const
+float ALicentaRPGCharacter::CalculateFallDamage(const float OnLandingVelocity, const float FallingDistance,
+                                                const float PlayerMaxHealth) const
 {
-	float const MaxHealthMultiplier = PlayerMaxHealth / 100 + ((PlayerMaxHealth / 100) * 0.66);
-	float const Damage = (OnLandingVelocity - LandingVelocityThreshold) * (FallingDistance - FallDistanceThreshold) * FallDamageMultiplier * MaxHealthMultiplier;
+	const float MaxHealthMultiplier = PlayerMaxHealth / 100 + ((PlayerMaxHealth / 100) * 0.66);
+	const float Damage = (OnLandingVelocity - LandingVelocityThreshold) * (FallingDistance - FallDistanceThreshold) *
+		FallDamageMultiplier * MaxHealthMultiplier;
 	return Damage;
 }
 
@@ -368,10 +397,11 @@ void ALicentaRPGCharacter::ChangeDifficultyMultipliers()
 // Damage
 // ---------------------------------------------------------
 
-float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+float ALicentaRPGCharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent,
+                                       AController* EventInstigator,
                                        AActor* DamageCauser)
 {
-	float const ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	if (IsInvincible == false)
 	{
@@ -381,7 +411,8 @@ float ALicentaRPGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& D
 			OnCharacterDeath();
 		}
 		IsInvincible = true;
-		GetWorldTimerManager().SetTimer(DisableInvincibilityTimerHandle, this, &ALicentaRPGCharacter::DisableInvincibility, InvincibilityTime, false);
+		GetWorldTimerManager().SetTimer(DisableInvincibilityTimerHandle, this,
+		                                &ALicentaRPGCharacter::DisableInvincibility, InvincibilityTime, false);
 	}
 
 	return ActualDamage;

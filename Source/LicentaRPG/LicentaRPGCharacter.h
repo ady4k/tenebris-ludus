@@ -24,7 +24,7 @@ class ALicentaRPGCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
-	
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
@@ -62,6 +62,15 @@ class ALicentaRPGCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DodgeAnimation;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* QuickSaveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* QuickLoadAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* PauseAction;
+
 	/** User Widget */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables, meta = (AllowPrivateAccess = "true"))
 	UUserWidget* MainHUD;
@@ -78,12 +87,13 @@ public:
 	ALicentaRPGCharacter();
 
 	UFUNCTION(BlueprintCallable, Category = "Character Stats")
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator,
+	                         AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Difficulty")
 	void ChangeDifficultyMultipliers();
 
-	void DecreaseStamina(float const StaminaCost);
+	void DecreaseStamina(const float StaminaCost);
 
 protected:
 	virtual void Jump() override;
@@ -93,7 +103,7 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+
 	/** Called for crouching input */
 	void Crouch();
 
@@ -107,14 +117,21 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Dodging")
 	void OnRollEnd();
 
+	void QuickSave();
+	void QuickLoad();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Pause Menu")
+	void Pause();
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "Physics")
 	void OnCharacterDeath();
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		void GainExperience(float const Experience);
+	void GainExperience(const float Experience);
+
 private:
 	// -------- STAMINA SYSTEM -------- //
-	bool IsOutOfStamina(float const Offset) const;
+	bool IsOutOfStamina(const float Offset) const;
 	bool HasMaximumStamina() const;
 	void UpdateStaminaRegenTimers();
 	void EnableStaminaRegen();
@@ -123,13 +140,14 @@ private:
 
 	// -------- MOVEMENT -------- //
 	bool IsCharacterMoving() const;
-	void SetMaxWalkSpeed(float const Speed) const;
+	void SetMaxWalkSpeed(const float Speed) const;
 	bool IsCharacterOnGround() const;
 
 	// -------- FALL DAMAGE -------- //
 	virtual void Landed(const FHitResult& Hit) override;
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
-	float CalculateFallDamage(float const OnLandingVelocity, float const FallingDistance, float const PlayerMaxHealth) const;
+	float CalculateFallDamage(const float OnLandingVelocity, const float FallingDistance,
+	                          const float PlayerMaxHealth) const;
 
 	// -------- COMBAT SYSTEM -------- //
 	void InvokeAttack();
@@ -181,29 +199,29 @@ private:
 	// -------- DODGING -------- //
 	bool IsDodging = false;
 
-// -------- CONSTANTS -------- //
+	// -------- CONSTANTS -------- //
 	// -------- MOVEMENT -------- //
-	float const MaxWalkSpeed = 300.0f;
-	float const MaxSprintSpeed = 500.0f;
-	float const MaxCrouchWalkSpeed = 200.0f;
-	float const MaxCrouchSprintSpeed = 300.0f;
+	const float MaxWalkSpeed = 300.0f;
+	const float MaxSprintSpeed = 500.0f;
+	const float MaxCrouchWalkSpeed = 200.0f;
+	const float MaxCrouchSprintSpeed = 300.0f;
 
 	// -------- STAMINA REGEN -------- //
-	float const EnableStaminaRegenDelay = 0.5f;
-	float const StaminaRegenDelay = 0.1f;
-	float const StaminaRegenAmount = 4.0f;
+	const float EnableStaminaRegenDelay = 0.5f;
+	const float StaminaRegenDelay = 0.1f;
+	const float StaminaRegenAmount = 4.0f;
 
 	// ------- STAMINA COSTS ------- //
-	float const CrouchSprintStaminaCost = 7.0f;
-	float const SprintStaminaCost = 10.0f;
-	float const JumpStaminaCost = 15.0f;
-	float const RollStaminaCost = 15.0f;
+	const float CrouchSprintStaminaCost = 7.0f;
+	const float SprintStaminaCost = 10.0f;
+	const float JumpStaminaCost = 15.0f;
+	const float RollStaminaCost = 15.0f;
 
 	// -------- FALL DAMAGE -------- //
-	float const FallDistanceThreshold = 600.0f;
-	float const LandingVelocityThreshold = 1300.0f;
-	float const FallDamageMultiplier = 0.0001f;
+	const float FallDistanceThreshold = 600.0f;
+	const float LandingVelocityThreshold = 1300.0f;
+	const float FallDamageMultiplier = 0.0001f;
 
 	// -------- COMBAT SYSTEM -------- //
-	float const InvincibilityTime = 0.5f;
+	const float InvincibilityTime = 0.5f;
 };

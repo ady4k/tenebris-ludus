@@ -15,33 +15,34 @@ class LICENTARPG_API URPGSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere, Category = "SaveGameData")
+	UPROPERTY()
 	FTransform PlayerTransform;
 
-	UPROPERTY(VisibleAnywhere, Category = "SaveGameData")
+	UPROPERTY()
 	float CurrentHealth;
 
-	UPROPERTY(VisibleAnywhere, Category = "SaveGameData")
+	UPROPERTY()
 	float CurrentMana;
 
-	UPROPERTY(VisibleAnywhere, Category = "SaveGameData")
+	UPROPERTY()
 	float CurrentStamina;
 
-	UPROPERTY(VisibleAnywhere, Category = "SaveGameData")
+	UPROPERTY()
 	float CurrentExperience;
 
-	UPROPERTY(VisibleAnywhere, Category = "SaveGameData")
+	UPROPERTY()
 	int32 CurrentLevel;
 
-	UPROPERTY(VisibleAnywhere, Category = "SaveGameData")
+	UPROPERTY()
 	int32 CurrentStrength;
 
-	UPROPERTY(VisibleAnywhere, Category = "SaveGameData")
+	UPROPERTY()
 	int32 CurrentDexterity;
 
-	UPROPERTY(VisibleAnywhere, Category = "SaveGameData")
+	UPROPERTY()
 	int32 CurrentIntelligence;
 
-	UPROPERTY(VisibleAnywhere, Category = "SaveGameData")
+	UPROPERTY()
 	int32 CurrentAvailablePoints;
+
 };

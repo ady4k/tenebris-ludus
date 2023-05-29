@@ -20,6 +20,8 @@ class ALicentaRPGGameMode : public AGameModeBase
 	UPROPERTY()
 	UCharacterStats* PlayerCharacterStats;
 
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,6 +37,11 @@ public:
 	void LoadGame(FString SlotName);
 
 private:
+	FTimerHandle AutoSaveTimerHandle;
+	float const AutoSaveTime = 60.0f;
+
+	void AutoSave();
+
 	void SetPlayerCharacterStats();
 	UCharacterStats* GetPlayerCharacterStats() const;
 
