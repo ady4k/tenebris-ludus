@@ -12,12 +12,14 @@
 ALicentaRPGGameMode::ALicentaRPGGameMode()
 {
 	DifficultyManager = CreateDefaultSubobject<UDifficultyManager>(TEXT("DifficultyManager"));
+	EnemySpawnManager = CreateDefaultSubobject<UEnemySpawnManager>(TEXT("EnemySpawnManager"));
 }
 
 void ALicentaRPGGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	SetPlayerCharacterStats();
+	EnemySpawnManager->RespawnEnemies();
 
 	GetWorldTimerManager().SetTimer(AutoSaveTimerHandle, this, &ALicentaRPGGameMode::AutoSave, AutoSaveTime, true);
 }
@@ -50,7 +52,7 @@ UCharacterStats* ALicentaRPGGameMode::GetPlayerCharacterStats() const
 
 
 // ---------------------------------------------------------
-void ALicentaRPGGameMode::SaveGame(const FString SlotName)
+void ALicentaRPGGameMode::SaveGame(const FString SlotName) const
 {
 	URPGSaveGame* SaveGameInstance = Cast<URPGSaveGame>(UGameplayStatics::CreateSaveGameObject(URPGSaveGame::StaticClass()));
 
@@ -89,7 +91,7 @@ void ALicentaRPGGameMode::SaveGame(const FString SlotName)
 	}
 }
 
-void ALicentaRPGGameMode::LoadGame(const FString SlotName)
+void ALicentaRPGGameMode::LoadGame(const FString SlotName) const
 {
 	const TArray<uint8> EncryptedData = LoadGameDataFromFile(GetFilePath(SlotName));
 	if (EncryptedData.Num() == 0)
@@ -119,6 +121,7 @@ void ALicentaRPGGameMode::LoadGame(const FString SlotName)
 		CharacterStats->SetIntelligence(SaveGameInstance->CurrentIntelligence);
 		CharacterStats->SetAvailableStatsPoints(SaveGameInstance->CurrentAvailablePoints);
 	}
+	EnemySpawnManager->RespawnEnemies();
 }
 
 
@@ -132,13 +135,6 @@ FString ALicentaRPGGameMode::GetFilePath(const FString& SlotName)
 // ---------------------------------------------------------
 TArray<uint8> ALicentaRPGGameMode::ConvertSaveGameToByteArray(URPGSaveGame* SaveGameInstance)
 {
-	/*TArray<uint8> Data;
-	FMemoryWriter MemoryWriter(Data, true);
-	MemoryWriter.ArIsSaveGame = true;
-	MemoryWriter << SaveGameInstance;
-	MemoryWriter.Close();
-	return Data;*/
-
 	FBufferArchive BufferArchive;
 	BufferArchive.ArIsSaveGame = true;
 	BufferArchive.Serialize(&SaveGameInstance->PlayerTransform, sizeof(FTransform));
@@ -192,8 +188,8 @@ TArray<uint8> ALicentaRPGGameMode::EncryptSaveFile(const TArray<uint8>& Data, co
 	FMemory::Memcpy(AESKey.Key, Key.GetData(), Key.Num());
 
 	const int32 NumBytes = Data.Num();
-	int32 PaddingSize = FAES::AESBlockSize - (NumBytes % FAES::AESBlockSize);
-	int32 PaddedSize = NumBytes + PaddingSize;
+	const int32 PaddingSize = FAES::AESBlockSize - (NumBytes % FAES::AESBlockSize);
+	const int32 PaddedSize = NumBytes + PaddingSize;
 
 	TArray<uint8> EncryptedData;
 	EncryptedData.SetNumZeroed(PaddedSize);

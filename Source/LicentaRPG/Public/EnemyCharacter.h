@@ -11,6 +11,7 @@
 
 class UCombatSystem;
 
+
 UCLASS()
 class LICENTARPG_API AEnemyCharacter : public ACharacter
 {

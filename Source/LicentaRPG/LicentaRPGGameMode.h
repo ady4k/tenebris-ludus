@@ -7,6 +7,7 @@
 #include "DifficultyManager.h"
 #include "RPGSaveGame.h"
 #include "CharacterStats.h"
+#include "EnemySpawnManager.h"
 #include "LicentaRPGGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -16,6 +17,9 @@ class ALicentaRPGGameMode : public AGameModeBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Difficulty", meta = (AllowPrivateAccess = "true"))
 	UDifficultyManager* DifficultyManager;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Difficulty", meta = (AllowPrivateAccess = "true"))
+	UEnemySpawnManager* EnemySpawnManager;
 
 	UPROPERTY()
 	UCharacterStats* PlayerCharacterStats;
@@ -31,10 +35,10 @@ public:
 	UDifficultyManager* GetDifficultyManager() const;
 
 	UFUNCTION(BlueprintCallable)
-	void SaveGame(FString SlotName);
+	void SaveGame(FString SlotName) const;
 
 	UFUNCTION(BlueprintCallable)
-	void LoadGame(FString SlotName);
+	void LoadGame(FString SlotName) const;
 
 private:
 	FTimerHandle AutoSaveTimerHandle;
