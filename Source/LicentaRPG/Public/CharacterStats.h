@@ -34,6 +34,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
 	void UpdateLevelText(int32 CurrentLevelValue);
+	
 
 protected:
 	// Called when the game starts
@@ -55,6 +56,7 @@ public:
 	void DecreaseMana(float const Amount);
 	void SetCurrentMana(float const Amount);
 	float GetCurrentMana() const;
+	float GetMaxMana() const;
 
 	void IncreaseMaxStamina(float const Amount);
 	void IncreaseStamina(float const Amount);

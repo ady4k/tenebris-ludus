@@ -118,6 +118,11 @@ float UCharacterStats::GetCurrentMana() const
 	return CurrentMana;
 }
 
+float UCharacterStats::GetMaxMana() const
+{
+	return MaxMana;
+}
+
 
 // ----- STAMINA -----
 void UCharacterStats::IncreaseMaxStamina(float const Amount)

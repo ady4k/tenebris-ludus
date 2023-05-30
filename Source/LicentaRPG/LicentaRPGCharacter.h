@@ -93,6 +93,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Difficulty")
 	void ChangeDifficultyMultipliers();
 
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	bool CheckIfMaxHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void PickupHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Mana")
+	bool CheckIfMaxMana() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Mana")
+	void PickupMana() const;
+
+
 	void DecreaseStamina(const float StaminaCost);
 
 protected:

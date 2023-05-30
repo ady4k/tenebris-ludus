@@ -339,6 +339,26 @@ bool ALicentaRPGCharacter::IsCharacterOnGround() const
 	return !GetCharacterMovement()->IsFalling();
 }
 
+bool ALicentaRPGCharacter::CheckIfMaxHealth() const
+{
+	return CharacterStats->GetCurrentHealth() >= CharacterStats->GetMaxHealth();
+}
+
+void ALicentaRPGCharacter::PickupHealth() const
+{
+	CharacterStats->IncreaseHealth(CharacterStats->GetMaxHealth() / 3);
+}
+
+bool ALicentaRPGCharacter::CheckIfMaxMana() const
+{
+	return CharacterStats->GetCurrentMana() >= CharacterStats->GetMaxMana();
+}
+
+void ALicentaRPGCharacter::PickupMana() const
+{
+	CharacterStats->IncreaseMana(CharacterStats->GetMaxMana() / 3);
+}
+
 
 // ---------------------------------------------------------
 // Fall Damage System
@@ -393,11 +413,12 @@ void ALicentaRPGCharacter::ChangeDifficultyMultipliers()
 }
 
 
+
 // ---------------------------------------------------------
 // Damage
 // ---------------------------------------------------------
 
-float ALicentaRPGCharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent,
+float ALicentaRPGCharacter::TakeDamage(const float DamageAmount, const FDamageEvent& DamageEvent,
                                        AController* EventInstigator,
                                        AActor* DamageCauser)
 {
