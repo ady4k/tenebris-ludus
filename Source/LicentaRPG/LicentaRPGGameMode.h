@@ -8,6 +8,7 @@
 #include "RPGSaveGame.h"
 #include "CharacterStats.h"
 #include "EnemySpawnManager.h"
+#include "PickupsManager.h"
 #include "LicentaRPGGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -20,6 +21,9 @@ class ALicentaRPGGameMode : public AGameModeBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Difficulty", meta = (AllowPrivateAccess = "true"))
 	UEnemySpawnManager* EnemySpawnManager;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Difficulty", meta = (AllowPrivateAccess = "true"))
+	UPickupsManager* PickupsManager;
 
 	UPROPERTY()
 	UCharacterStats* PlayerCharacterStats;

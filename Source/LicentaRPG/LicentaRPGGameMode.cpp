@@ -13,6 +13,7 @@ ALicentaRPGGameMode::ALicentaRPGGameMode()
 {
 	DifficultyManager = CreateDefaultSubobject<UDifficultyManager>(TEXT("DifficultyManager"));
 	EnemySpawnManager = CreateDefaultSubobject<UEnemySpawnManager>(TEXT("EnemySpawnManager"));
+	PickupsManager = CreateDefaultSubobject<UPickupsManager>(TEXT("PickupsManager"));
 }
 
 void ALicentaRPGGameMode::BeginPlay()
@@ -20,6 +21,7 @@ void ALicentaRPGGameMode::BeginPlay()
 	Super::BeginPlay();
 	SetPlayerCharacterStats();
 	EnemySpawnManager->RespawnEnemies();
+	PickupsManager->RespawnPickups();
 
 	GetWorldTimerManager().SetTimer(AutoSaveTimerHandle, this, &ALicentaRPGGameMode::AutoSave, AutoSaveTime, true);
 }
