@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "PickupsEnum.h"
+#include "Enums/PickupsEnum.h"
 #include "PickupsManager.generated.h"
 
 
@@ -22,9 +22,6 @@ class LICENTARPG_API UPickupsManager : public UActorComponent
 
 	UPROPERTY(EditAnywhere, Category = "Pickups")
 	TMap<FVector, TEnumAsByte<EPickups>> PickupsMap;
-
-	UPROPERTY()
-	TArray<AActor*> SpawnedPickups;
 
 public:	
 	// Sets default values for this component's properties

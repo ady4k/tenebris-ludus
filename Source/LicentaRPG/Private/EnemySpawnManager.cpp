@@ -18,7 +18,11 @@ void UEnemySpawnManager::RespawnEnemies()
 {
 	for (int i = 0; i < SpawnedEnemies.Num(); i++)
 	{
-		SpawnedEnemies[i]->Destroy();
+		if (SpawnedEnemies[i] != nullptr)
+		{
+			SpawnedEnemies[i]->Destroy();
+		}
+		SpawnedEnemies.RemoveAt(i);
 	}
 	for (int i = 0; i < SpawnPoints.Num(); i++)
 	{

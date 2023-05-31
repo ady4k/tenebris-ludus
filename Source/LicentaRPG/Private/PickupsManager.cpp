@@ -15,10 +15,6 @@ UPickupsManager::UPickupsManager()
 
 void UPickupsManager::RespawnPickups()
 {
-	for (int i = 0; i < SpawnedPickups.Num(); i++)
-	{
-		SpawnedPickups[i]->Destroy();
-	}
 	for (auto& Elem : PickupsMap)
 	{
 		SpawnPickup(Elem.Key, Elem.Value);
@@ -33,12 +29,10 @@ void UPickupsManager::SpawnPickup(const FVector& Location, EPickups PickupType)
 	if (PickupType == EPickups::HealthPickup)
 	{
 		AActor* HealthPickup = GetWorld()->SpawnActor<AActor>(HealthPickupClass, Location, FRotator::ZeroRotator, SpawnParams);
-		SpawnedPickups.Add(HealthPickup);
 	}
 	else if (PickupType == EPickups::ManaPickup)
 	{
 		AActor* ManaPickup = GetWorld()->SpawnActor<AActor>(ManaPickupClass, Location, FRotator::ZeroRotator, SpawnParams);
-		SpawnedPickups.Add(ManaPickup);
 	}
 	else
 	{

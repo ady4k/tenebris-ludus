@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Enums/StatsEnum.h"
 #include "InputActionValue.h"
 #include "CharacterStats.h"
 #include "CombatSystem.h"
@@ -71,6 +72,9 @@ class ALicentaRPGCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* PauseAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ToggleStatsAction;
+
 	/** User Widget */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables, meta = (AllowPrivateAccess = "true"))
 	UUserWidget* MainHUD;
@@ -105,8 +109,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mana")
 	void PickupMana() const;
 
-
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
 	void DecreaseStamina(const float StaminaCost);
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	void IncreaseStat(EStatsSelection StatType) const;
 
 protected:
 	virtual void Jump() override;
@@ -135,6 +142,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Pause Menu")
 	void Pause();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Stats Menu")
+	void ToggleStats();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Physics")
 	void OnCharacterDeath();
@@ -211,6 +221,10 @@ private:
 
 	// -------- DODGING -------- //
 	bool IsDodging = false;
+
+	// -------- MENU -------- //
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables, meta = (AllowPrivateAccess = "true"))
+	bool StatsMenuOpen = false;
 
 	// -------- CONSTANTS -------- //
 	// -------- MOVEMENT -------- //

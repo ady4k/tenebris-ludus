@@ -147,6 +147,10 @@ void ALicentaRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 
 		// Pausing
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ALicentaRPGCharacter::Pause);
+
+		// Toggle Stats Menu
+		EnhancedInputComponent->BindAction(ToggleStatsAction, ETriggerEvent::Started, this,
+					                                   &ALicentaRPGCharacter::ToggleStats);
 	}
 }
 
@@ -235,6 +239,7 @@ void ALicentaRPGCharacter::Dodge()
 		IsDodging = true;
 		IsInvincible = true;
 		CharacterStats->DecreaseStamina(RollStaminaCost);
+		DisableStaminaRegen();
 		if (CombatSystem->GetIsAttacking())
 		{
 			CombatSystem->ResetAttack();
@@ -322,6 +327,11 @@ void ALicentaRPGCharacter::DecreaseStamina(const float StaminaCost)
 {
 	CharacterStats->DecreaseStamina(StaminaCost);
 	UpdateStaminaRegenTimers();
+}
+
+void ALicentaRPGCharacter::IncreaseStat(const EStatsSelection StatType) const
+{
+	CharacterStats->IncreaseStats(StatType);
 }
 
 bool ALicentaRPGCharacter::IsCharacterMoving() const

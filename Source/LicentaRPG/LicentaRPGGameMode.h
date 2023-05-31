@@ -39,7 +39,7 @@ public:
 	UDifficultyManager* GetDifficultyManager() const;
 
 	UFUNCTION(BlueprintCallable)
-	void SaveGame(FString SlotName) const;
+	void SaveGame(FString SlotName);
 
 	UFUNCTION(BlueprintCallable)
 	void LoadGame(FString SlotName) const;
@@ -53,7 +53,7 @@ private:
 	void SetPlayerCharacterStats();
 	UCharacterStats* GetPlayerCharacterStats() const;
 
-	static TArray<uint8> ConvertSaveGameToByteArray(URPGSaveGame* SaveGameInstance);
+	TArray<uint8> ConvertSaveGameToByteArray(URPGSaveGame* SaveGameInstance);
 	URPGSaveGame* ConvertByteArrayToSaveGame(TArray<uint8>& Data) const;
 
 	static FString GetFilePath(const FString& SlotName);

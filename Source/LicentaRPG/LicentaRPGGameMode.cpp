@@ -5,7 +5,7 @@
 #include "Config/CryptoKey.h"
 #include "LicentaRPGCharacter.h"
 #include "Kismet/GameplayStatics.h"
-#include "Serialization/BufferArchive.h"
+#include "Serialization/MemoryWriter.h"
 #include "UObject/ConstructorHelpers.h"
 
 
@@ -34,7 +34,7 @@ UDifficultyManager* ALicentaRPGGameMode::GetDifficultyManager() const
 
 void ALicentaRPGGameMode::AutoSave()
 {
-	SaveGame("auto-save");
+	SaveGame("quick-save");
 }
 
 // ---------------------------------------------------------
@@ -54,7 +54,7 @@ UCharacterStats* ALicentaRPGGameMode::GetPlayerCharacterStats() const
 
 
 // ---------------------------------------------------------
-void ALicentaRPGGameMode::SaveGame(const FString SlotName) const
+void ALicentaRPGGameMode::SaveGame(const FString SlotName)
 {
 	URPGSaveGame* SaveGameInstance = Cast<URPGSaveGame>(UGameplayStatics::CreateSaveGameObject(URPGSaveGame::StaticClass()));
 
@@ -122,8 +122,10 @@ void ALicentaRPGGameMode::LoadGame(const FString SlotName) const
 		CharacterStats->SetDexterity(SaveGameInstance->CurrentDexterity);
 		CharacterStats->SetIntelligence(SaveGameInstance->CurrentIntelligence);
 		CharacterStats->SetAvailableStatsPoints(SaveGameInstance->CurrentAvailablePoints);
+		CharacterStats->CalculateStats();
 	}
 	EnemySpawnManager->RespawnEnemies();
+	
 }
 
 
@@ -137,26 +139,27 @@ FString ALicentaRPGGameMode::GetFilePath(const FString& SlotName)
 // ---------------------------------------------------------
 TArray<uint8> ALicentaRPGGameMode::ConvertSaveGameToByteArray(URPGSaveGame* SaveGameInstance)
 {
-	FBufferArchive BufferArchive;
-	BufferArchive.ArIsSaveGame = true;
-	BufferArchive.Serialize(&SaveGameInstance->PlayerTransform, sizeof(FTransform));
-	BufferArchive << SaveGameInstance->CurrentHealth;
-	BufferArchive << SaveGameInstance->CurrentMana;
-	BufferArchive << SaveGameInstance->CurrentStamina;
-	BufferArchive << SaveGameInstance->CurrentExperience;
-	BufferArchive << SaveGameInstance->CurrentLevel;
-	BufferArchive << SaveGameInstance->CurrentStrength;
-	BufferArchive << SaveGameInstance->CurrentDexterity;
-	BufferArchive << SaveGameInstance->CurrentIntelligence;
-	BufferArchive << SaveGameInstance->CurrentAvailablePoints;
-	BufferArchive.Flush();
-
 	TArray<uint8> Data;
-	Data.Append((uint8*)BufferArchive.GetData(), BufferArchive.Num());
-	BufferArchive.Close();
+	FMemoryWriter MemoryWriter(Data, true);
+	MemoryWriter.ArIsSaveGame = true;
+
+	// Serialize each property of SaveGameInstance manually
+	MemoryWriter.Serialize(&SaveGameInstance->PlayerTransform, sizeof(FTransform));
+	MemoryWriter << SaveGameInstance->CurrentHealth;
+	MemoryWriter << SaveGameInstance->CurrentMana;
+	MemoryWriter << SaveGameInstance->CurrentStamina;
+	MemoryWriter << SaveGameInstance->CurrentExperience;
+	MemoryWriter << SaveGameInstance->CurrentLevel;
+	MemoryWriter << SaveGameInstance->CurrentStrength;
+	MemoryWriter << SaveGameInstance->CurrentDexterity;
+	MemoryWriter << SaveGameInstance->CurrentIntelligence;
+	MemoryWriter << SaveGameInstance->CurrentAvailablePoints;
+
+	MemoryWriter.Close();
 
 	return Data;
 }
+
 
 URPGSaveGame* ALicentaRPGGameMode::ConvertByteArrayToSaveGame(TArray<uint8>& Data) const
 {
@@ -197,9 +200,9 @@ TArray<uint8> ALicentaRPGGameMode::EncryptSaveFile(const TArray<uint8>& Data, co
 	EncryptedData.SetNumZeroed(PaddedSize);
 	FMemory::Memcpy(EncryptedData.GetData(), Data.GetData(), Data.Num());
 
-	FAES::EncryptData(EncryptedData.GetData(), EncryptedData.Num(), AESKey);
-
 	EncryptedData[PaddedSize - 1] = PaddingSize;
+
+	FAES::EncryptData(EncryptedData.GetData(), EncryptedData.Num(), AESKey);
 
 	return EncryptedData;
 }
@@ -209,15 +212,14 @@ TArray<uint8> ALicentaRPGGameMode::DecryptSaveFile(const TArray<uint8>& Data, co
 	FAES::FAESKey AESKey;
 	FMemory::Memcpy(AESKey.Key, Key.GetData(), Key.Num());
 
-	const int32 NumBytes = Data.Num();
-	const int32 PaddingSize = Data[NumBytes - 1];
-	const int32 DecryptedSize = NumBytes - PaddingSize;
-
 	TArray<uint8> DecryptedData;
-	DecryptedData.SetNum(DecryptedSize);
-	FMemory::Memcpy(DecryptedData.GetData(), Data.GetData(), DecryptedSize);
+	DecryptedData.SetNum(Data.Num());
+	FMemory::Memcpy(DecryptedData.GetData(), Data.GetData(), Data.Num());
 
-	FAES::DecryptData(DecryptedData.GetData(), Data.Num(), AESKey);
+	FAES::DecryptData(DecryptedData.GetData(), Data.Num(), AESKey); 
+
+	const int32 PaddingSize = DecryptedData[DecryptedData.Num() - 1];
+	DecryptedData.RemoveAt(DecryptedData.Num() - PaddingSize, PaddingSize, false);
 
 	return DecryptedData;
 }

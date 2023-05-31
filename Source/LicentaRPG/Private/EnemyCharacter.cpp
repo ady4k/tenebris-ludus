@@ -10,9 +10,9 @@ AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("EnCharacterStats"));
+	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
 
-	CombatSystem = CreateDefaultSubobject<UCombatSystem>(TEXT("EnCombatSystem"));
+	CombatSystem = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
 }
 
 
