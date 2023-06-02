@@ -204,8 +204,6 @@ void UCharacterStats::IncreaseLevel()
 {
 	CurrentLevel++;
 	AvailableStatsPoints++;
-	CurrentHealth = MaxHealth;
-	CurrentMana = MaxMana;
 	SetMaxExperience(75 + CurrentLevel * 25);
 	UpdateLevelText(CurrentLevel);
 	UpdateAvailablePointsText(AvailableStatsPoints);

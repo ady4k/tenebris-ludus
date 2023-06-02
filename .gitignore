@@ -74,7 +74,10 @@ Plugins/*/Intermediate/*
 DerivedDataCache/*
 
 # Config files for C++ classes
-Source/LicentaRPG/Public/Config/
+Source/LicentaRPG/Public/Config/*
+
+# Imported assets
+Content/ImportedAssets/*
 
 .vs
 .vscode

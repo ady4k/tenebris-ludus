@@ -81,11 +81,11 @@ class ALicentaRPGCharacter : public ACharacter
 
 	/** Character Stats */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	UCharacterStats* CharacterStats;
+	UCharacterStats* CharacterStatsG;
 
 	/** Combat System */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	UCombatSystem* CombatSystem;
+	UCombatSystem* CombatSystemG;
 
 public:
 	ALicentaRPGCharacter();
