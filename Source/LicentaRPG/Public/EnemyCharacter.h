@@ -21,13 +21,13 @@ class LICENTARPG_API AEnemyCharacter : public ACharacter
 	ALicentaRPGGameMode* GameModeInstance;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	UCharacterStats* CharacterStats;
+	UCharacterStats* CharacterStatsG;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> HitReactMontages;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	UCombatSystem* CombatSystem;
+	UCombatSystem* CombatSystemG;
 
 public:
 	// Sets default values for this character's properties

@@ -10,9 +10,9 @@ AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
+	CharacterStatsG = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
 
-	CombatSystem = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
+	CombatSystemG = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
 }
 
 
@@ -72,8 +72,8 @@ void AEnemyCharacter::RegenHealth()
 {
 	if (CanRegenHealth)
 	{
-		CharacterStats->IncreaseHealth(HealthRegenAmount * HealthRegenMultiplier);
-		if (CharacterStats->GetCurrentHealth() >= CharacterStats->GetMaxHealth())
+		CharacterStatsG->IncreaseHealth(HealthRegenAmount * HealthRegenMultiplier);
+		if (CharacterStatsG->GetCurrentHealth() >= CharacterStatsG->GetMaxHealth())
 		{
 			DisableHealthRegen();
 		}
@@ -89,10 +89,10 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	if (IsInvincible == false)
 	{
 		GetAndPlayHitReactMontage();
-		CombatSystem->ResetAttack();
+		CombatSystemG->ResetAttack();
 
-		CharacterStats->DecreaseHealth(ActualDamage * DamageReductionMultiplier);
-		if (CharacterStats->GetCurrentHealth() <= 0.f)
+		CharacterStatsG->DecreaseHealth(ActualDamage * DamageReductionMultiplier);
+		if (CharacterStatsG->GetCurrentHealth() <= 0.f)
 		{
 			OnCharacterDeath();
 			IsInvincible = true;
