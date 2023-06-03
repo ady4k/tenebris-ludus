@@ -10,9 +10,6 @@ AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
-
-	CombatSystem = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
 }
 
 
@@ -21,6 +18,20 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (CharacterStats == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CharacterStats is null!"));
+		CharacterStats = NewObject<UCharacterStats>(this, TEXT("CharacterStats"));
+		CharacterStats->RegisterComponent();
+	}
+
+	if (CombatSystem == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CombatSystem is null!"));
+		CombatSystem = NewObject<UCombatSystem>(this, TEXT("CombatSystem"));
+		CombatSystem->RegisterComponent();
+	}
 
 	if (GetWorld())
 	{
@@ -155,4 +166,24 @@ void AEnemyCharacter::ChangeDifficultyMultipliers()
 
 	float const MovementSpeedMultiplier = GameModeInstance->GetDifficultyManager()->GetEnemyMovementSpeedMultiplier();
 	MaxMovementSpeed = BaseMaxMovementSpeed * MovementSpeedMultiplier;
+}
+
+void AEnemyCharacter::SetCombatSystem(UCombatSystem* System)
+{
+	CombatSystem = System;
+}
+
+void AEnemyCharacter::SetCharacterStats(UCharacterStats* Stats)
+{
+	CharacterStats = Stats;
+}
+
+UCharacterStats* AEnemyCharacter::GetCharacterStats() const
+{
+	return CharacterStats;
+}
+
+UCombatSystem* AEnemyCharacter::GetCombatSystem() const
+{
+	return CombatSystem;
 }

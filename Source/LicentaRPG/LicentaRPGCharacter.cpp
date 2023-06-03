@@ -48,13 +48,6 @@ ALicentaRPGCharacter::ALicentaRPGCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
-
-	// Create a Character Stats Component
-	CharacterStats = CreateDefaultSubobject<UCharacterStats>(TEXT("CharacterStats"));
-
-
-	// Create a Combat System Component
-	CombatSystem = CreateDefaultSubobject<UCombatSystem>(TEXT("CombatSystem"));
 }
 
 
@@ -71,6 +64,20 @@ void ALicentaRPGCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+	}
+
+	if (CharacterStats == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CharacterStats is null!"));
+		CharacterStats = NewObject<UCharacterStats>(this, TEXT("CharacterStats"));
+		CharacterStats->RegisterComponent();
+	}
+
+	if (CombatSystem == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CombatSystem is null!"));
+		CombatSystem = NewObject<UCombatSystem>(this, TEXT("CombatSystem"));
+		CombatSystem->RegisterComponent();
 	}
 
 	if (GetWorld())
@@ -332,6 +339,26 @@ void ALicentaRPGCharacter::DecreaseStamina(const float StaminaCost)
 void ALicentaRPGCharacter::IncreaseStat(const EStatsSelection StatType) const
 {
 	CharacterStats->IncreaseStats(StatType);
+}
+
+void ALicentaRPGCharacter::SetCharacterStats(UCharacterStats* Stats)
+{
+	CharacterStats = Stats;
+}
+
+void ALicentaRPGCharacter::SetCombatSystem(UCombatSystem* Combat)
+{
+	CombatSystem = Combat;
+}
+
+UCharacterStats* ALicentaRPGCharacter::GetCharacterStats() const
+{
+	return CharacterStats;
+}
+
+UCombatSystem* ALicentaRPGCharacter::GetCombatSystem() const
+{
+	return CombatSystem;
 }
 
 bool ALicentaRPGCharacter::IsCharacterMoving() const

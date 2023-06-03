@@ -80,12 +80,12 @@ class ALicentaRPGCharacter : public ACharacter
 	UUserWidget* MainHUD;
 
 	/** Character Stats */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	class UCharacterStats* CharacterStats;
+	UPROPERTY()
+	UCharacterStats* CharacterStats;
 
 	/** Combat System */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	class UCombatSystem* CombatSystem;
+	UPROPERTY()
+	UCombatSystem* CombatSystem;
 
 public:
 	ALicentaRPGCharacter();
@@ -114,6 +114,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	void IncreaseStat(EStatsSelection StatType) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	void SetCharacterStats(UCharacterStats* Stats);
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	void SetCombatSystem(UCombatSystem* Combat);
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	UCharacterStats* GetCharacterStats() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	UCombatSystem* GetCombatSystem() const;
 
 protected:
 	virtual void Jump() override;

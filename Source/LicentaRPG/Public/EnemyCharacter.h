@@ -20,14 +20,14 @@ class LICENTARPG_API AEnemyCharacter : public ACharacter
 	UPROPERTY()
 	ALicentaRPGGameMode* GameModeInstance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true", IgnoreForMemberInitializationTest))
-	class UCharacterStats* CharacterStats;
+	UPROPERTY()
+	UCharacterStats* CharacterStats;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> HitReactMontages;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true", IgnoreForMemberInitializationTest))
-	class UCombatSystem* CombatSystem;
+	UPROPERTY()
+	UCombatSystem* CombatSystem;
 
 public:
 	// Sets default values for this character's properties
@@ -38,6 +38,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Difficulty")
 	void ChangeDifficultyMultipliers();
+
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	void SetCombatSystem(UCombatSystem* System);
+
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	void SetCharacterStats(UCharacterStats* Stats);
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		UCharacterStats* GetCharacterStats() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		UCombatSystem* GetCombatSystem() const;
 
 protected:
 	// Called when the game starts or when spawned
