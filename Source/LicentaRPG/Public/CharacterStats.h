@@ -32,10 +32,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
 	void UpdateAvailablePointsText(int32 AvailablePointsValue);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
-	void UpdateStatsMenu();
-	
-
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -98,19 +94,19 @@ public:
 private:
 	// Character stats
 	UPROPERTY(EditAnywhere, Category = "Health")
-	float CurrentHealth;
+	float CurrentHealth = 100;
 
 	UPROPERTY(EditAnywhere, Category = "Health")
 	float MaxHealth = 100;
 
 	UPROPERTY(EditAnywhere, Category = "Mana")
-	float CurrentMana;
+	float CurrentMana = 100;
 
 	UPROPERTY(EditAnywhere, Category = "Mana")
 	float MaxMana = 100;
 
 	UPROPERTY(EditAnywhere, Category = "Stamina")
-	float CurrentStamina;
+	float CurrentStamina = 100;
 
 	UPROPERTY(EditAnywhere, Category = "Stamina")
 	float MaxStamina = 100;
@@ -134,6 +130,6 @@ private:
 	int32 Intelligence = 10;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 AvailableStatsPoints = 1;
+	int32 AvailableStatsPoints = 0;
 };
 

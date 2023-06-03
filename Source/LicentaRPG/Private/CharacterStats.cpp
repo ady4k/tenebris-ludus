@@ -203,7 +203,7 @@ float UCharacterStats::GetCurrentExperience() const
 void UCharacterStats::IncreaseLevel()
 {
 	CurrentLevel++;
-	AvailableStatsPoints++;
+	AvailableStatsPoints += 3;
 	SetMaxExperience(75 + CurrentLevel * 25);
 	UpdateLevelText(CurrentLevel);
 	UpdateAvailablePointsText(AvailableStatsPoints);
@@ -293,6 +293,5 @@ void UCharacterStats::CalculateStats()
 	UpdateStaminaBar(CurrentStamina, MaxStamina);
 	UpdateExperienceBar(CurrentExperience, MaxExperience);
 	UpdateAvailablePointsText(AvailableStatsPoints);
-	UpdateStatsMenu();
 }
 

@@ -80,12 +80,12 @@ class ALicentaRPGCharacter : public ACharacter
 	UUserWidget* MainHUD;
 
 	/** Character Stats */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	UCharacterStats* CharacterStatsG;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
+	class UCharacterStats* CharacterStats;
 
 	/** Combat System */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
-	UCombatSystem* CombatSystemG;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Variables, meta = (AllowPrivateAccess = "true"))
+	class UCombatSystem* CombatSystem;
 
 public:
 	ALicentaRPGCharacter();
