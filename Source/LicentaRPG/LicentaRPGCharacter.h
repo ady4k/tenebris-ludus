@@ -32,7 +32,6 @@ class ALicentaRPGCharacter : public ACharacter
 
 
 	// All the input actions that the character can perform
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* JumpAction;
 
@@ -233,6 +232,10 @@ private:
 
 	// -------- DODGING -------- //
 	bool IsDodging = false;
+	bool ShouldRotate = false;
+	float RotationTime = 0.1f;
+	FRotator TargetRotation = FRotator(0, 0, 0);
+	FRotator CurrentRotation = FRotator(0, 0, 0);
 
 	// -------- MENU -------- //
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables, meta = (AllowPrivateAccess = "true"))

@@ -89,4 +89,10 @@ private:
 
 	FTimerHandle TraceTimerHandle;
 	float const TraceTimer = 0.01f;
+
+	// Rotation details
+	bool ShouldRotate = false;
+	float RotationTime = 0.1f;
+	FRotator TargetRotation = FRotator(0, 0, 0);
+	FRotator CurrentRotation = FRotator(0, 0, 0);
 };

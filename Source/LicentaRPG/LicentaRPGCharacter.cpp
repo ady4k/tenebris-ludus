@@ -110,6 +110,24 @@ void ALicentaRPGCharacter::Tick(float DeltaTime)
 			SprintStop();
 		}
 	}
+
+	if (ShouldRotate)
+	{
+		// Update the rotation time
+		RotationTime -= DeltaTime;
+		if (RotationTime <= 0)
+		{
+			// Stop the rotation when the time is up
+			ShouldRotate = false;
+			CurrentRotation = TargetRotation;
+		}
+		else
+		{
+			// Calculate and apply the new rotation
+			CurrentRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 10.0f);
+			SetActorRotation(CurrentRotation);
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -243,6 +261,15 @@ void ALicentaRPGCharacter::Dodge()
 {
 	if (!IsDodging && !IsOutOfStamina(RollStaminaCost))
 	{
+		// Set the target rotation to the camera's yaw
+		TargetRotation = FRotator(0.0f, GetFollowCamera()->GetComponentRotation().Yaw, 0.0f);
+		// Store the current rotation
+		CurrentRotation = GetActorRotation();
+
+		// Set the flag and timer
+		ShouldRotate = true;
+		RotationTime = 0.1f;
+
 		IsDodging = true;
 		IsInvincible = true;
 		CharacterStats->DecreaseStamina(RollStaminaCost);
@@ -383,7 +410,7 @@ bool ALicentaRPGCharacter::CheckIfMaxHealth() const
 
 void ALicentaRPGCharacter::PickupHealth() const
 {
-	CharacterStats->IncreaseHealth(CharacterStats->GetMaxHealth() / 3);
+	CharacterStats->IncreaseHealth(CharacterStats->GetMaxHealth() / 2);
 }
 
 bool ALicentaRPGCharacter::CheckIfMaxMana() const
@@ -393,7 +420,7 @@ bool ALicentaRPGCharacter::CheckIfMaxMana() const
 
 void ALicentaRPGCharacter::PickupMana() const
 {
-	CharacterStats->IncreaseMana(CharacterStats->GetMaxMana() / 3);
+	CharacterStats->IncreaseMana(CharacterStats->GetMaxMana() / 2);
 }
 
 
@@ -432,8 +459,7 @@ float ALicentaRPGCharacter::CalculateFallDamage(const float OnLandingVelocity, c
                                                 const float PlayerMaxHealth) const
 {
 	const float MaxHealthMultiplier = PlayerMaxHealth / 100 + ((PlayerMaxHealth / 100) * 0.66);
-	const float Damage = (OnLandingVelocity - LandingVelocityThreshold) * (FallingDistance - FallDistanceThreshold) *
-		FallDamageMultiplier * MaxHealthMultiplier;
+	const float Damage = (OnLandingVelocity - LandingVelocityThreshold) * (FallingDistance -		FallDistanceThreshold) * FallDamageMultiplier * MaxHealthMultiplier;
 	return Damage;
 }
 

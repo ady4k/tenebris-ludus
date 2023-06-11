@@ -3,6 +3,7 @@
 
 #include "CombatSystem.h"
 
+#include "Camera/CameraComponent.h"
 #include "LicentaRPG/LicentaRPGCharacter.h"
 
 
@@ -106,6 +107,15 @@ void UCombatSystem::PlayAttackMontage()
 	UAnimMontage* MontageToPlay = AttackMontages[AttackIndex];
 	if (OwnerCharacter != nullptr)
 	{
+		// Set the target rotation to the camera's yaw
+		TargetRotation = FRotator(0.0f, OwnerCharacter->GetFollowCamera()->GetComponentRotation().Yaw, 0.0f);
+		// Store the current rotation
+		CurrentRotation = OwnerCharacter->GetActorRotation();
+
+		// Set the flag and timer
+		ShouldRotate = true;
+		RotationTime = 0.1f;
+
 		OwnerCharacter->PlayAnimMontage(MontageToPlay, 1.0);
 		OwnerCharacter->DecreaseStamina(AttackStaminaCost);
 	}
@@ -132,6 +142,22 @@ void UCombatSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (ShouldRotate)
+	{
+		// Update the rotation time
+		RotationTime -= DeltaTime;
+		if (RotationTime <= 0)
+		{
+			// Stop the rotation when the time is up
+			ShouldRotate = false;
+			CurrentRotation = TargetRotation;
+		}
+		else
+		{
+			// Calculate and apply the new rotation
+			CurrentRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 10.0f);
+			OwnerCharacter->SetActorRotation(CurrentRotation);
+		}
+	}
 }
 
